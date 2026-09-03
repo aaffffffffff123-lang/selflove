@@ -1009,7 +1009,11 @@ function pressDown(e){
   document.getElementById("say").classList.remove("on");
   renderStage();
 }
-function pressUp(e){if(e)e.preventDefault();if(!G||!G.holding)return;bank();}
+function pressUp(e){
+  if(!G||!G.holding)return;
+  if(e&&e.cancelable)e.preventDefault();
+  bank();
+}
 function bank(){
   const i=G.tier;
   if(i>=0){
