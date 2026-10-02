@@ -11,145 +11,26 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare only the requested changes
+      - name: Reuse the reviewed patch and checks with the narrow-screen dialogue fix
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object index.html)" = "351dd1a3c42ed2d73bc30505c56acbe855c739a9"
-          python -m pip install --quiet cairosvg Pillow
+          git fetch --depth=1 origin ac5144b54c48b1be011cc353c8425f4e0925c771
+          git show ac5144b54c48b1be011cc353c8425f4e0925c771:.github/workflows/selflove-refine.yml >/tmp/reviewed-workflow.yml
+          python -m pip install --quiet pyyaml
           python - <<'PY'
           from pathlib import Path
-          import re, json, subprocess, io, difflib
-          import cairosvg
-          from PIL import Image
-          p=Path('index.html'); old=p.read_text(); html=old
-          evidence=Path('/tmp/selflove-evidence'); evidence.mkdir()
-          def replace_once(a,b):
-              global html
-              assert html.count(a)==1, ('anchor',a[:100],html.count(a))
-              html=html.replace(a,b,1)
-          start=html.index('const LINES={'); end=html.index('\nconst recent=',start)
-          old_lines=html[start:end]
-          lines={
-            'body':['나라도 나를 좋아해야지','내가 나까지 미워하면 어떡해','나한텐 나밖에 없어','이 정도는 해줘도 되잖아','나도 나름 애쓰고 있어','남들이 몰라줘서 그렇지','내가 그렇게까지 별론가','누가 안아주는 것도 아니고','나 정도면 괜찮은 사람이지','나한테만 왜 이렇게 박하지'],
-            'accept':['가만 보면 괜찮게 생겼어','자꾸 보니까 정드네','나도 사랑받을 수 있지','아직 날 알아본 사람이 없는 거지','이 정도면 매력 있지 않나','난 내가 제일 잘 알아','내가 나를 좋아하겠다는데','좋아하는 데 이유가 꼭 있어야 돼','내가 뭐 어때서','나 정도면 사랑해줄 만하지']
-          }
-          assert all(len(v)==10 and len(set(v))==10 for v in lines.values())
-          new_lines='const LINES='+json.dumps(lines,ensure_ascii=False,indent=2)+';'
-          replace_once(old_lines,new_lines)
-          replace_once('<title>스스로를 사랑하기</title>','<title>스스로를 사랑하기</title>\n<link rel="icon" href="./favicon.ico?v=20261002" sizes="any">\n<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=20261002">\n<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261002">')
-          css='''/* 오락실 링크: 점수, 소리 버튼, 누르기 영역과 분리 */
-          #arcadeLink{position:absolute;right:14px;top:calc(64px + env(safe-area-inset-top));z-index:31;
-            display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1.5px solid rgba(30,38,48,.25);
-            border-radius:10px;background:rgba(255,253,246,.9);color:#4A5449;text-decoration:none;
-            font-family:'Gaegu',sans-serif;font-size:15px;font-weight:700;line-height:1;white-space:nowrap;touch-action:manipulation}
-          #arcadeLink svg{width:18px;height:18px;flex:none}
-          #arcadeLink:active{transform:translateY(1px)}
-          #arcadeLink:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
-          #app:has(.ov:not(.hide)) #arcadeLink{top:calc(18px + env(safe-area-inset-top))}
-          '''
-          replace_once('@media (prefers-reduced-motion:reduce)',css+'@media (prefers-reduced-motion:reduce)')
-          link='''
-            <a id="arcadeLink" href="https://aaffffffffff123-lang.github.io/arcade/" aria-label="혐규오락실로 돌아가기">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h14l2 5H3zM10 16V8"/><circle cx="10" cy="5" r="3"/><path d="M16 13h2"/></svg>
-              <span>혐규오락실</span>
-            </a>'''
-          replace_once('<div id="app">','<div id="app">'+link)
-          guard='''// 오락실 링크에 초점이 있을 때 스페이스 키로 게임을 누르지 않는다.
-          ['keydown','keyup'].forEach(type=>document.getElementById('arcadeLink').addEventListener(type,e=>{
-            if(e.code==='Space')e.stopPropagation();
-          }));
-          '''
-          replace_once('buildLadder(); buildPatience();',guard+'\nbuildLadder(); buildPatience();')
-          scripts=lambda s:'\n'.join(re.findall(r'<script[^>]*>(.*?)</script>',s,re.S))
-          assert scripts(html).replace(new_lines,old_lines,1).replace(guard+'\n','',1)==scripts(old),'Unexpected game logic change'
-          subprocess.run(['node','--check'],input=scripts(html),text=True,check=True)
-          p.write_text(html)
-          # Reuse the original start-screen Ouroboros, rather than changing the game's symbol.
-          pos=old.index('/* ══════════ 우로보로스 ══════════ */')
-          a=old.index('(function(){',pos); b=old.index('\n})();',a)+len('\n})();')
-          js='const document={getElementById(){return {insertAdjacentHTML(_p,s){process.stdout.write(s)}}}};\n'+old[a:b]
-          svg=subprocess.run(['node','-e',js],capture_output=True,text=True,check=True).stdout
-          assert svg.startswith('<svg ') and svg.endswith('</svg>')
-          svg=svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ',1).replace('viewBox="0 0 200 200"','viewBox="15 15 170 170"',1)
-          for f in ['favicon.svg','favicon.ico','apple-touch-icon.png']:
-              assert not Path(f).exists(), ('Existing icon must not be overwritten',f)
-          Path('favicon.svg').write_text(svg)
-          png=cairosvg.svg2png(bytestring=svg.encode(),output_width=256,output_height=256)
-          im=Image.open(io.BytesIO(png)).convert('RGBA')
-          im.save('favicon.ico',sizes=[(16,16),(32,32),(48,48),(64,64)])
-          bg=Image.new('RGBA',(180,180),'#FFF3DC'); small=im.resize((160,160),Image.Resampling.LANCZOS);bg.alpha_composite(small,(10,10));bg.convert('RGB').save('apple-touch-icon.png')
-          im.save(evidence/'favicon-preview.png')
-          (evidence/'changes.diff').write_text(''.join(difflib.unified_diff(old.splitlines(True),html.splitlines(True),fromfile='before/index.html',tofile='after/index.html')))
-          (evidence/'dialogue.json').write_text(json.dumps(lines,ensure_ascii=False,indent=2))
-          (evidence/'index.html').write_text(html)
-          print('Original gameplay JavaScript preserved outside LINES and the new navigation-key guard.')
+          import yaml
+          steps=yaml.safe_load(Path('/tmp/reviewed-workflow.yml').read_text())['jobs']['check']['steps']
+          prep=steps[1]['run']
+          assert prep.count('내가 나를 좋아하겠다는데')==1
+          prep=prep.replace('내가 나를 좋아하겠다는데','내가 나 좋다는데')
+          checks=steps[2]['run'].replace('await page.waitForTimeout(1480);',"await page.waitForFunction(()=>G.tier>=1,null,{timeout:15000});")
+          for name,text in [('prepare',prep),('check',checks),('save',steps[4]['run'])]:
+              Path('/tmp/selflove-'+name+'.sh').write_text(text)
           PY
-      - name: Browser smoke checks
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm install --silent --prefix /tmp/sl-tools playwright
-          /tmp/sl-tools/node_modules/.bin/playwright install --with-deps chromium
-          python -m http.server 8765 --bind 127.0.0.1 >/tmp/selflove-http.log 2>&1 &
-          cat >/tmp/sl-tools/check.cjs <<'JS'
-          const {chromium}=require('playwright');
-          const fs=require('fs');
-          const assert=require('node:assert/strict');
-          (async()=>{
-            const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-            const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
-            const errors=[]; page.on('pageerror',e=>errors.push(e.message));
-            await page.route('**/script.google.com/**',r=>r.abort());
-            await page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
-            await page.waitForSelector('#ouro svg');
-            assert(await page.evaluate(()=>ok3d),'WebGL failed');
-            assert.equal(await page.locator('#arcadeLink').count(),1);
-            await page.screenshot({path:'/tmp/selflove-evidence/start-390.png'});
-            for(const size of [{width:320,height:640},{width:844,height:390}]){
-              await page.setViewportSize(size);
-              const box=await page.locator('#arcadeLink').boundingBox();
-              assert(box.x>=0&&box.y>=0&&box.x+box.width<=size.width&&box.y+box.height<=size.height);
-            }
-            await page.setViewportSize({width:390,height:844});
-            await page.locator('#ouro').click();
-            await page.evaluate(()=>{G.face.mode='away';G.face.wait=100;G.face.t=0;G.face.yaw=Math.PI;G.idle=-100;sndOn=false;});
-            const input=await page.locator('#hold').boundingBox();
-            await page.mouse.move(input.x+input.width/2,input.y+input.height/2);
-            await page.mouse.down(); await page.waitForTimeout(1480);
-            const speech=await page.locator('#say').textContent();
-            assert(await page.evaluate(t=>LINES.body.includes(t),speech));
-            assert(await page.evaluate(()=>G.holding));
-            await page.screenshot({path:'/tmp/selflove-evidence/play-390.png'});
-            await page.mouse.up();
-            assert(await page.evaluate(()=>!G.holding&&G.score>0),'Release or scoring failed');
-            await page.locator('#arcadeLink').focus();
-            await page.keyboard.down('Space'); await page.waitForTimeout(80);
-            assert(await page.evaluate(()=>!G.holding),'Arcade link accidentally pressed game');
-            await page.keyboard.up('Space');
-            const dialogue=await page.evaluate(()=>[...LINES.body,...LINES.accept]);
-            for(const size of [{width:320,height:640},{width:390,height:844}]){
-              await page.setViewportSize(size);
-              for(const text of dialogue){
-                const fit=await page.evaluate(t=>{const s=document.getElementById('say');s.textContent=t;s.classList.add('on');const b=s.getBoundingClientRect(),h=document.getElementById('hud').getBoundingClientRect();return s.scrollWidth<=s.clientWidth+1&&b.x>=0&&b.right<=innerWidth&&b.bottom<=h.top;},text);
-                assert(fit,'Dialogue overlaps/overflows: '+text+' at '+size.width);
-              }
-            }
-            await page.setViewportSize({width:390,height:844});
-            await page.evaluate(()=>{RANK.top=async()=>[];G.run=false;G.over=true;openEnd();});
-            assert(await page.locator('#arcadeLink').isVisible());
-            await page.screenshot({path:'/tmp/selflove-evidence/end-390.png'});
-            const icon=await page.request.get('http://127.0.0.1:8765/favicon.svg');assert.equal(icon.status(),200);
-            assert((await icon.text()).includes('<svg'));
-            await page.route('https://aaffffffffff123-lang.github.io/arcade/**',r=>r.fulfill({body:'Arcade link destination checked'}));
-            await page.locator('#arcadeLink').click();
-            assert.equal(page.url(),'https://aaffffffffff123-lang.github.io/arcade/');
-            assert.deepEqual(errors,[]);
-            fs.writeFileSync('/tmp/selflove-evidence/checks.json',JSON.stringify({passed:true,dialogueCount:dialogue.length,checks:['WebGL startup','portrait and landscape navigation bounds','hold/release/score','arcade keyboard isolation','all dialogue at 320px and 390px','result navigation','favicon response','arcade destination'],errors},null,2));
-            await browser.close();
-          })().catch(e=>{console.error(e);process.exit(1)});
-          JS
-          node /tmp/sl-tools/check.cjs
+          bash /tmp/selflove-prepare.sh
+          bash /tmp/selflove-check.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -158,12 +39,4 @@ jobs:
           retention-days: 3
       - name: Save checked files on the isolated branch
         shell: bash
-        run: |
-          set -euo pipefail
-          git diff --check
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm -- .github/workflows/selflove-refine.yml
-          git add -- index.html favicon.svg favicon.ico apple-touch-icon.png
-          git commit -m 'Refine selflove dialogue and add favicon and arcade navigation'
-          git push origin HEAD:refs/heads/codex/selflove-copy-20261002
+        run: bash /tmp/selflove-save.sh
