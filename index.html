@@ -179,11 +179,9 @@ body{
   padding:30px;text-align:center;font-size:20px;color:#4A5449;z-index:30}
 /* 오락실 링크: 점수, 소리 버튼, 누르기 영역과 분리 */
 #arcadeLink{position:absolute;right:14px;top:calc(64px + env(safe-area-inset-top));z-index:31;
-  display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1.5px solid rgba(30,38,48,.25);
-  border-radius:10px;background:rgba(255,253,246,.9);color:#4A5449;text-decoration:none;
-  font-family:'Gaegu',sans-serif;font-size:15px;font-weight:700;line-height:1;white-space:nowrap;touch-action:manipulation}
-#arcadeLink svg{width:18px;height:18px;flex:none}
-#arcadeLink:active{transform:translateY(1px)}
+  display:block;width:36px;height:36px;padding:4px;line-height:0;opacity:.84;touch-action:manipulation}
+#arcadeLink svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(1px 2px 1.5px #0006)}
+#arcadeLink:active svg{transform:scale(.88)}
 #arcadeLink:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 #app:has(.ov:not(.hide)) #arcadeLink{top:calc(18px + env(safe-area-inset-top))}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
@@ -192,8 +190,7 @@ body{
 <body>
 <div id="app">
   <a id="arcadeLink" href="https://aaffffffffff123-lang.github.io/arcade/" aria-label="혐규오락실로 돌아가기">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h14l2 5H3zM10 16V8"/><circle cx="10" cy="5" r="3"/><path d="M16 13h2"/></svg>
-    <span>혐규오락실</span>
+    <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M24.00 2.84 C27.19 2.93 30.48 3.49 33.44 4.70 C36.39 5.91 39.79 7.65 41.72 10.08 C43.64 12.51 44.41 16.18 44.97 19.28 C45.53 22.39 45.73 25.72 45.08 28.74 C44.42 31.76 43.07 35.11 41.06 37.40 C39.05 39.69 35.87 41.15 33.03 42.47 C30.19 43.79 27.09 45.14 24.00 45.31 C20.91 45.47 17.40 44.72 14.49 43.46 C11.58 42.19 8.30 40.21 6.54 37.72 C4.78 35.22 4.45 31.57 3.93 28.51 C3.41 25.45 2.76 22.23 3.42 19.37 C4.08 16.52 6.10 13.90 7.91 11.36 C9.72 8.82 11.61 5.56 14.29 4.14 C16.97 2.72 20.81 2.75 24.00 2.84 Z" fill="#221D1F"/><g stroke="#EFF1EC" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M13.2 8.4V17.9"/><path d="M20.4 6.2V16.6"/><path d="M27.6 6.2V16.6"/><path d="M34.6 8.8V18.3"/></g><g fill="#EFF1EC"><ellipse cx="18.1" cy="25.2" rx="2" ry="2.3"/><ellipse cx="29.9" cy="25.2" rx="2" ry="2.3"/></g><path d="M19.9 32.3a4.6 4.6 0 0 0 8.2 0" fill="none" stroke="#EFF1EC" stroke-width="2.3" stroke-linecap="round"/></svg>
   </a>
   <canvas id="gl"></canvas>
   <div id="flash"></div>
