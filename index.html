@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>스스로를 사랑하기</title>
+<link rel="icon" href="./favicon.ico?v=20261002" sizes="any">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=20261002">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261002">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
@@ -174,11 +177,24 @@ body{
 #rankBtn:focus-visible{outline:3px solid var(--pink);outline-offset:4px;border-radius:12px}
 #nogl{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
   padding:30px;text-align:center;font-size:20px;color:#4A5449;z-index:30}
+/* 오락실 링크: 점수, 소리 버튼, 누르기 영역과 분리 */
+#arcadeLink{position:absolute;right:14px;top:calc(64px + env(safe-area-inset-top));z-index:31;
+  display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1.5px solid rgba(30,38,48,.25);
+  border-radius:10px;background:rgba(255,253,246,.9);color:#4A5449;text-decoration:none;
+  font-family:'Gaegu',sans-serif;font-size:15px;font-weight:700;line-height:1;white-space:nowrap;touch-action:manipulation}
+#arcadeLink svg{width:18px;height:18px;flex:none}
+#arcadeLink:active{transform:translateY(1px)}
+#arcadeLink:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+#app:has(.ov:not(.hide)) #arcadeLink{top:calc(18px + env(safe-area-inset-top))}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div id="app">
+  <a id="arcadeLink" href="https://aaffffffffff123-lang.github.io/arcade/" aria-label="혐규오락실로 돌아가기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h14l2 5H3zM10 16V8"/><circle cx="10" cy="5" r="3"/><path d="M16 13h2"/></svg>
+    <span>혐규오락실</span>
+  </a>
   <canvas id="gl"></canvas>
   <div id="flash"></div>
 
@@ -337,12 +353,30 @@ const MAXT=TIERS[TIERS.length-1].at;
 
 /* ══════════ 멘트 ══════════ */
 const LINES={
-  body:["나는 나를 함부로 대하지 않는다","나는 나를 아낀다","나는 내 몸에게 고맙다",
-    "나는 여기 있어도 된다","나는 나를 지킨다","나는 나를 미워하지 않는다",
-    "나는 나에게 다정할 수 있다","나는 나를 돌본다","나는 나와 오래 함께한다","나는 나에게 돌아온다"],
-  accept:["나는 있는 그대로 충분하다","나는 사랑받을 자격이 있다","나는 나를 믿는다",
-    "나는 실수해도 괜찮은 사람이다","나는 나로 살아도 된다","나는 부족해도 괜찮다",
-    "나는 잘못되지 않았다","나는 나여도 된다","나는 그대로도 괜찮다","나는 나를 인정한다"]
+  "body": [
+    "나라도 나를 좋아해야지",
+    "내가 나까지 미워하면 어떡해",
+    "나한텐 나밖에 없어",
+    "이 정도는 해줘도 되잖아",
+    "나도 나름 애쓰고 있어",
+    "남들이 몰라줘서 그렇지",
+    "내가 그렇게까지 별론가",
+    "누가 안아주는 것도 아니고",
+    "나 정도면 괜찮은 사람이지",
+    "나한테만 왜 이렇게 박하지"
+  ],
+  "accept": [
+    "가만 보면 괜찮게 생겼어",
+    "자꾸 보니까 정드네",
+    "나도 사랑받을 수 있지",
+    "아직 날 알아본 사람이 없는 거지",
+    "이 정도면 매력 있지 않나",
+    "난 내가 제일 잘 알아",
+    "내가 나 좋다는데",
+    "좋아하는 데 이유가 꼭 있어야 돼",
+    "내가 뭐 어때서",
+    "나 정도면 사랑해줄 만하지"
+  ]
 };
 const recent={body:[],accept:[]};
 function pickLine(cat){
@@ -1410,6 +1444,11 @@ document.getElementById("btnRankClose").addEventListener("click",()=>{
 document.getElementById("sndBtn").addEventListener("click",e=>{
   sndOn=!sndOn;e.currentTarget.textContent=sndOn?"🔊":"🔇";
   if(sndOn){ac();SFX.tick();}});
+
+// 오락실 링크에 초점이 있을 때 스페이스 키로 게임을 누르지 않는다.
+['keydown','keyup'].forEach(type=>document.getElementById('arcadeLink').addEventListener(type,e=>{
+  if(e.code==='Space')e.stopPropagation();
+}));
 
 buildLadder(); buildPatience();
 if(ok3d){build3D();requestAnimationFrame(loop);}
