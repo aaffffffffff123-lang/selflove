@@ -9,180 +9,160 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261002">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
-:root{
-  --sky1:#FFF3DC; --sky2:#F0DFC2; --sky3:#C2C39C; --sky4:#8E9B84;
-  --ink:#1E2630; --ink-soft:#5F6A62;
-  --pink:#E8306B; --lav:#8B6CF0; --gold:#F2B33C;
-  --bile:#8FB03F;
-}
+:root{--or:#F07526;--pk:#F6A1B6;--cr:#FFF4DC;--vi:#3A2F7A;--dk:#2A1238;--bl:#3A1430;--mv:#B85A8E}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overflow:hidden}
 body{
-  font-family:'Gaegu',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
-  color:var(--ink);background:#8E9B84;
+  font-family:'Song Myung',serif;color:var(--dk);background:#F3C7A6;
   display:flex;align-items:center;justify-content:center;
-  touch-action:manipulation;user-select:none;
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;
 }
-#app{
-  position:relative;width:min(100vw,560px);height:100%;max-height:1000px;overflow:hidden;
-  background:linear-gradient(178deg,var(--sky1) 0%,var(--sky2) 34%,var(--sky3) 74%,var(--sky4) 100%);
-}
-/* 가운데를 띄우는 비네트 */
-#app:after{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
-  background:radial-gradient(120% 82% at 50% 34%,rgba(0,0,0,0) 44%,rgba(31,38,28,.22) 100%);
-}
+#app{position:relative;width:min(100vw,560px);height:100%;max-height:1000px;overflow:hidden;background:var(--or)}
 #app.shake{animation:shk .36s cubic-bezier(.36,.07,.19,.97)}
 @keyframes shk{10%{transform:translate(-8px,4px) rotate(-.6deg)}28%{transform:translate(9px,-5px) rotate(.7deg)}
   46%{transform:translate(-7px,-2px) rotate(-.4deg)}64%{transform:translate(5px,4px) rotate(.3deg)}
   82%{transform:translate(-3px,-1px)}100%{transform:translate(0,0)}}
 #gl{position:absolute;inset:0;display:block;width:100%;height:100%;z-index:1}
+/* 캔버스 천 질감 */
+#weave{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;opacity:.62;
+  background-image:var(--weave);background-size:160px 160px}
 #flash{position:absolute;inset:0;background:#B83A28;opacity:0;pointer-events:none;z-index:9;mix-blend-mode:multiply}
 #flash.on{animation:fl .4s}
 @keyframes fl{0%{opacity:.55}100%{opacity:0}}
 
 /* 얼굴 인내심 */
-#pat{position:absolute;top:calc(10px + env(safe-area-inset-top));left:16px;right:16px;
-  display:flex;gap:5px;height:9px;z-index:11}
-#pat div{flex:1 1 auto;border-radius:5px;background:var(--pink);
-  box-shadow:0 1px 0 rgba(0,0,0,.14);transition:background .2s,opacity .3s,transform .3s}
-#pat div.s1{background:#E0576A}
-#pat div.s2{background:#C98A4C}
-#pat div.s3{background:#A9A63F}
-#pat div.s4{background:var(--bile)}
-#pat div.off{opacity:.16;transform:scaleY(.5);background:#5F6A62}
+#pat{position:absolute;top:calc(12px + env(safe-area-inset-top));left:16px;display:flex;gap:5px;height:16px;z-index:11}
+#pat div{flex:0 0 7px;height:16px;border-radius:3px 1px 4px 2px;background:var(--cr);
+  box-shadow:1px 1px 0 rgba(58,20,48,.5);transition:opacity .3s,transform .3s}
+#pat div.off{opacity:.3;transform:scaleY(.6)}
 #pat.hit{animation:phit .34s}
 @keyframes phit{0%,100%{transform:translateX(0)}30%{transform:translateX(-6px)}70%{transform:translateX(6px)}}
 #pat.heal{animation:pheal .62s}
-@keyframes pheal{0%{transform:scaleY(1)}30%{transform:scaleY(2.1)}62%{transform:scaleY(.86)}100%{transform:scaleY(1)}}
+@keyframes pheal{0%{transform:scaleY(1)}30%{transform:scaleY(1.6)}62%{transform:scaleY(.9)}100%{transform:scaleY(1)}}
 
 /* 점수 */
-#score{position:absolute;top:calc(26px + env(safe-area-inset-top));left:20px;z-index:10;pointer-events:none}
-#scoreLab{font-family:'Nanum Brush Script',cursive;font-size:26px;color:#4A5449;line-height:1}
-#scoreLab .hh{color:var(--pink);font-size:24px}
-#scoreNum{font-family:'Nanum Brush Script',cursive;font-size:60px;line-height:.86;color:var(--ink);margin-top:2px;
-  text-shadow:0 2px 0 rgba(255,255,255,.5)}
+#score{position:absolute;top:calc(36px + env(safe-area-inset-top));left:16px;z-index:10;pointer-events:none}
+#scoreLab{font-size:14px;line-height:1.2;color:var(--cr)}
+#scoreLab .hh{color:var(--vi)}
+#scoreNum{font-size:54px;line-height:.95;color:var(--cr);margin-top:2px;text-shadow:2px 3px 0 var(--bl)}
 #scoreNum.bump{animation:bump .3s ease-out}
 @keyframes bump{0%{transform:scale(1)}42%{transform:scale(1.3) rotate(-4deg)}100%{transform:scale(1)}}
-#gain{position:absolute;left:4px;top:54px;font-family:'Nanum Brush Script',cursive;font-size:34px;
-  color:var(--pink);opacity:0}
+#gain{position:absolute;left:74px;top:24px;font-size:30px;color:var(--cr);text-shadow:1px 2px 0 var(--bl);opacity:0}
 #gain.on{animation:gain .85s ease-out}
 @keyframes gain{0%{opacity:0;transform:translateY(4px)}18%{opacity:1}100%{opacity:0;transform:translateY(-32px)}}
 
-/* 말풍선 — 캔버스와 비네트 위, 하단 HUD 아래 */
-#say{position:absolute;bottom:26%;z-index:7;max-width:42%;
-  font-family:'Nanum Brush Script',cursive;font-size:27px;line-height:1.12;color:var(--ink);
-  background:#FFFDF6;border:2.5px solid var(--ink);border-radius:18px;
-  padding:5px 15px 9px;word-break:keep-all;opacity:0;transition:opacity .16s;
-  box-shadow:3px 4px 0 rgba(30,38,48,.28);pointer-events:none}
-#say.side-l{left:12px}
-#say.side-r{right:12px}
+/* 말풍선 — 내 머리 위에 붙는다 */
+#say{position:absolute;left:0;top:0;z-index:7;max-width:62%;width:max-content;
+  transform:translateY(-100%);transform-origin:var(--tx,50%) 100%;
+  font-size:17px;line-height:1.3;color:var(--dk);background:var(--cr);
+  border-radius:14px 4px 16px 6px;padding:8px 13px;box-shadow:3px 3px 0 var(--vi);
+  word-break:keep-all;opacity:0;transition:opacity .14s;pointer-events:none}
 #say.on{opacity:1}
 #say.pop{animation:pop .24s}
-@keyframes pop{0%{transform:scale(.8) rotate(-2deg)}58%{transform:scale(1.08) rotate(1deg)}100%{transform:scale(1)}}
-#say:after{content:"";position:absolute;top:100%;border:7px solid transparent;border-top-color:var(--ink)}
-#say.side-l:after{right:26px}
-#say.side-r:after{left:26px}
+@keyframes pop{0%{transform:translateY(-100%) scale(.82)}58%{transform:translateY(-100%) scale(1.07)}100%{transform:translateY(-100%) scale(1)}}
+#say:after{content:"";position:absolute;left:var(--tx,50%);top:100%;width:12px;height:12px;margin-left:-6px;
+  background:var(--cr);transform:translateY(-6px) rotate(45deg)}
 
 /* 얼굴이 세는 숫자 */
-#cnt{position:absolute;right:22px;top:19%;z-index:11;
-  font-family:'Nanum Brush Script',cursive;font-size:44px;line-height:1;color:var(--ink);
-  background:#FFFDF6;border:2.5px solid var(--ink);border-radius:50%;
-  width:74px;height:74px;display:flex;align-items:center;justify-content:center;
-  box-shadow:3px 4px 0 rgba(30,38,48,.28);opacity:0;transition:opacity .15s;pointer-events:none}
+#cnt{position:absolute;right:22px;top:19%;z-index:11;width:72px;height:72px;
+  font-size:48px;line-height:1;color:var(--cr);background:var(--vi);border-radius:50% 46% 52% 44%;
+  box-shadow:3px 4px 0 var(--bl);display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;pointer-events:none}
 #cnt.on{opacity:1}
 #cnt.tick{animation:cnt .4s}
 @keyframes cnt{0%{transform:scale(1.5)}55%{transform:scale(.92)}100%{transform:scale(1)}}
-#cnt:after{content:"";position:absolute;left:-14px;top:50%;margin-top:-7px;
-  border:7px solid transparent;border-right-color:var(--ink)}
 
 /* 하단 */
-#hud{position:absolute;left:0;right:0;bottom:0;z-index:10;
-  padding:0 18px calc(18px + env(safe-area-inset-bottom))}
-#stage{display:flex;align-items:baseline;gap:9px;height:28px}
-#stageName{font-size:21px;font-weight:700;text-shadow:0 1px 0 rgba(255,255,255,.45)}
-#stagePt{font-family:'Nanum Brush Script',cursive;font-size:27px;color:var(--pink)}
-#ladder{display:flex;gap:4px;height:6px;margin:4px 0 9px}
-#ladder div{flex:1 1 auto;border-radius:3px;background:rgba(30,38,48,.22);transition:background .12s}
-#ladder div.on{background:var(--ink)}
-#ladder div.top.on{background:var(--pink)}
-#hold{width:100%;height:84px;border:none;border-radius:17px;background:var(--ink);color:#fff;
-  font-family:'Gaegu',sans-serif;font-size:26px;font-weight:700;
-  position:relative;overflow:hidden;cursor:pointer;box-shadow:0 5px 0 #0D1219;
-  transition:opacity .14s}
-#hold.cool{opacity:.42}
-#hold.down{transform:translateY(4px);box-shadow:0 1px 0 #0D1219}
-#hold .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:#3E7A55;z-index:0}
-#hold.top .fill{background:linear-gradient(90deg,var(--pink),var(--lav))}
+#hud{position:absolute;left:0;right:0;bottom:0;z-index:10;padding:0 16px calc(16px + env(safe-area-inset-bottom))}
+#stage{display:flex;align-items:baseline;gap:8px;height:26px}
+#stageName{font-size:18px;color:var(--dk)}
+#stagePt{font-size:20px;color:var(--vi)}
+#ladder{display:flex;gap:4px;height:7px;margin:4px 0 10px}
+#ladder div{flex:1 1 auto;border-radius:2px;background:rgba(58,20,48,.25);transition:background .12s}
+#ladder div.on{background:var(--cr)}
+#ladder div.top.on{background:var(--vi)}
+#hold{width:100%;height:76px;border:none;border-radius:6px 14px 6px 12px;background:var(--cr);color:var(--dk);
+  font-family:'Song Myung',serif;font-size:24px;position:relative;overflow:hidden;cursor:pointer;
+  box-shadow:4px 5px 0 var(--bl);transition:opacity .14s}
+#hold.cool{opacity:.55}
+#hold.down{transform:translate(3px,4px);box-shadow:1px 1px 0 var(--bl)}
+#hold .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#F6A1B6,#B85A8E 60%,#7D3B9C);z-index:0}
+#hold.top .fill{background:linear-gradient(90deg,#B85A8E,#3A2F7A)}
 #hold .ticks{position:absolute;inset:0;z-index:1}
-#hold .ticks i{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.26)}
-#hold .txt{position:relative;z-index:2}
-#hold:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+#hold .ticks i{position:absolute;top:0;bottom:0;width:2px;background:rgba(58,20,48,.22)}
+#hold .txt{position:relative;z-index:2;text-shadow:0 0 4px var(--cr),0 0 2px var(--cr)}
+#hold:focus-visible{outline:3px solid var(--vi);outline-offset:3px}
 
-/* 오버레이 */
+/* 오버레이 — 게임과 같은 주황 벽, 분홍 바닥 */
 .ov{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:28px;text-align:center;
-  background:linear-gradient(178deg,#FFF6E4 0%,#EEE2C6 46%,#C8CAA4 100%)}
+  background:linear-gradient(180deg,var(--or) 0%,var(--or) 61%,var(--pk) 61%,var(--pk) 100%)}
+.ov:before{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.62;
+  background-image:var(--weave);background-size:160px 160px}
+.ov>*{position:relative;z-index:1}
 .ov.hide{display:none}
-.ov h1{font-family:'Nanum Brush Script',cursive;font-size:62px;margin:0;line-height:1.05;font-weight:400}
-.ov .go{margin-top:28px;padding:14px 36px;border:none;border-radius:13px;background:var(--ink);
-  color:#fff;font-family:'Gaegu',sans-serif;font-size:23px;font-weight:700;cursor:pointer;box-shadow:0 5px 0 #0D1219}
-.ov .go:active{transform:translateY(4px);box-shadow:0 1px 0 #0D1219}
-#endLab,#rankLab{font-family:'Nanum Brush Script',cursive;font-size:30px;color:#4A5449}
-#endLab .hh,#rankLab .hh{color:var(--pink)}
-#endScore{font-family:'Nanum Brush Script',cursive;font-size:116px;line-height:.9;margin:2px 0 0}
-#rankBox{margin-top:20px;width:100%;max-width:308px}
-#rankForm{display:flex;gap:7px;margin-bottom:11px}
-#nameIn{flex:1 1 auto;min-width:0;padding:10px 12px;border:2.5px solid var(--ink);border-radius:11px;
-  font-size:18px;font-family:'Gaegu',sans-serif;background:#fff;color:var(--ink)}
-#nameIn:focus{outline:none;border-color:var(--pink)}
-#btnSubmit{flex:0 0 auto;padding:10px 18px;border:none;border-radius:11px;background:var(--pink);
-  color:#fff;font-family:'Gaegu',sans-serif;font-size:18px;font-weight:700;cursor:pointer}
+.ov h1{font-family:'Song Myung',serif;font-weight:400;font-size:54px;line-height:1.08;margin:0;color:var(--cr);
+  text-shadow:3px 4px 0 var(--bl)}
+.ov h1 .hh{color:var(--vi);text-shadow:none}
+.ov .go{margin-top:26px;padding:14px 34px;border:none;border-radius:6px 14px 6px 12px;background:var(--cr);color:var(--dk);
+  font-family:'Song Myung',serif;font-size:22px;cursor:pointer;box-shadow:4px 5px 0 var(--bl)}
+.ov .go:active{transform:translate(3px,4px);box-shadow:1px 1px 0 var(--bl)}
+#endLab,#rankLab{font-size:24px;color:var(--cr);text-shadow:2px 2px 0 var(--bl)}
+#endLab .hh,#rankLab .hh{color:var(--vi);text-shadow:none}
+#endScore{font-size:112px;line-height:.95;margin:4px 0 0;color:var(--cr);text-shadow:4px 5px 0 var(--bl)}
+#rankBox{margin-top:18px;width:100%;max-width:310px;padding:12px 12px 10px;
+  background:rgba(255,244,220,.95);border-radius:8px 16px 8px 14px;box-shadow:4px 5px 0 var(--bl)}
+#rankForm{display:flex;gap:7px;margin-bottom:10px}
+#nameIn{flex:1 1 auto;min-width:0;padding:10px 12px;border:2px solid var(--vi);border-radius:8px;
+  font-size:17px;font-family:'Gowun Dodum',sans-serif;background:#fff;color:var(--dk)}
+#nameIn:focus{outline:none;border-color:var(--mv)}
+#btnSubmit{flex:0 0 auto;padding:10px 16px;border:none;border-radius:8px;background:var(--vi);
+  color:var(--cr);font-family:'Song Myung',serif;font-size:17px;cursor:pointer}
 #btnSubmit:disabled{opacity:.45;cursor:default}
-.rank{list-style:none;margin:0;padding:0;font-size:17px;color:#4A5449;text-align:left;
+.rank{list-style:none;margin:0;padding:0;font-family:'Gowun Dodum',sans-serif;font-size:16px;color:var(--dk);text-align:left;
   overflow:auto;-webkit-overflow-scrolling:touch}
-#rankList{max-height:178px}
-#rankAll{max-height:46vh;width:100%;max-width:308px;margin-top:14px}
-.rank li{display:flex;gap:9px;padding:3px 2px;border-bottom:1px solid rgba(30,38,48,.1)}
-.rank li .n{flex:0 0 22px;color:#8D9689;font-variant-numeric:tabular-nums}
+#rankList{max-height:170px}
+#rankAll{max-height:46vh;width:100%;max-width:310px;margin-top:14px;padding:8px 12px;
+  background:rgba(255,244,220,.95);border-radius:8px 16px 8px 14px;box-shadow:4px 5px 0 var(--bl)}
+.rank li{display:flex;gap:9px;padding:4px 2px;border-bottom:1px solid rgba(58,20,48,.12)}
+.rank li .n{flex:0 0 22px;color:#8A6A80;font-variant-numeric:tabular-nums}
 .rank li .w{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank li .s{flex:0 0 auto;font-variant-numeric:tabular-nums}
-.rank li.mine{color:var(--ink);font-weight:700}
-#rankMsg,#rankAllMsg{font-size:15px;color:#4A5449;margin-top:8px;min-height:18px}
+.rank li.mine{color:var(--vi);font-weight:700}
+#rankMsg{font-family:'Gowun Dodum',sans-serif;font-size:14px;color:var(--dk);margin-top:6px;min-height:18px}
+#rankAllMsg{font-family:'Gowun Dodum',sans-serif;font-size:15px;color:var(--cr);text-shadow:1px 1px 0 var(--bl);margin-top:10px;min-height:18px}
 
-.tool{position:absolute;top:calc(26px + env(safe-area-inset-top));z-index:12;
-  background:rgba(255,255,255,.78);border:1.5px solid rgba(30,38,48,.3);border-radius:8px;
-  font-family:'Gaegu',sans-serif;font-size:15px;padding:3px 9px;cursor:pointer;color:#4A5449}
-#sndBtn{right:14px;font-size:19px;line-height:1;padding:5px 9px;border-radius:10px}
+.tool{position:absolute;top:calc(14px + env(safe-area-inset-top));z-index:12;background:var(--cr);border:none;
+  border-radius:6px 10px 6px 9px;box-shadow:2px 3px 0 var(--bl);font-size:15px;padding:3px 9px;cursor:pointer;color:var(--dk)}
+#sndBtn{right:14px;font-size:18px;line-height:1;padding:6px 9px}
 /* 시작 — 우로보로스 */
-#ouro{margin-top:24px;position:relative;width:min(62vw,266px);border:none;background:none;
+#ouro{margin-top:20px;position:relative;width:min(62vw,270px);aspect-ratio:1/1;border:none;background:none;
   padding:0;cursor:pointer;display:block;transition:transform .1s}
 #ouro:active{transform:scale(.94)}
 #ouro:focus-visible{outline:none}
 #ouro:focus-visible .halo{opacity:.9}
-#ouro svg{display:block;width:100%;height:auto;overflow:visible;position:relative;z-index:1}
-#ouro .halo{position:absolute;inset:-9%;border-radius:50%;z-index:0;
-  background:radial-gradient(circle,rgba(232,48,107,.20) 40%,rgba(232,48,107,0) 70%);
+#ouro canvas{display:block;width:100%;height:100%;position:relative;z-index:1}
+#ouro .halo{position:absolute;inset:-6%;border-radius:50%;z-index:0;
+  background:radial-gradient(circle,rgba(255,244,220,.55) 36%,rgba(255,244,220,0) 68%);
   animation:halo 2.9s ease-in-out infinite}
 @keyframes halo{0%,100%{transform:scale(.9);opacity:.5}50%{transform:scale(1.06);opacity:1}}
-#ouroCap{margin-top:2px;font-family:'Nanum Brush Script',cursive;font-size:25px;
-  color:#4A5449;opacity:.8;pointer-events:none}
+#ouroCap{margin-top:2px;font-size:24px;color:var(--cr);text-shadow:2px 2px 0 var(--bl);pointer-events:none}
 /* 순위 — 크기 다른 하트 세 개 */
-#rankBtn{margin-top:26px;border:none;background:none;padding:6px 10px;cursor:pointer;
+#rankBtn{margin-top:22px;border:none;background:none;padding:6px 10px;cursor:pointer;
   width:min(40vw,158px);display:block;transition:transform .1s}
 #rankBtn:active{transform:scale(.92)}
 #rankBtn svg{display:block;width:100%;height:auto;overflow:visible}
-#rankBtn:focus-visible{outline:3px solid var(--pink);outline-offset:4px;border-radius:12px}
+#rankBtn:focus-visible{outline:3px solid var(--vi);outline-offset:4px;border-radius:12px}
 #nogl{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
-  padding:30px;text-align:center;font-size:20px;color:#4A5449;z-index:30}
+  padding:30px;text-align:center;font-size:20px;color:var(--cr);text-shadow:1px 1px 0 var(--bl);z-index:30}
 /* 오락실 링크: 점수, 소리 버튼, 누르기 영역과 분리 */
 #arcadeLink{position:absolute;right:14px;top:calc(64px + env(safe-area-inset-top));z-index:31;
-  display:block;width:36px;height:36px;padding:4px;line-height:0;opacity:.84;touch-action:manipulation}
+  display:block;width:36px;height:36px;padding:4px;line-height:0;opacity:.9;touch-action:manipulation}
 #arcadeLink svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(1px 2px 1.5px #0006)}
 #arcadeLink:active svg{transform:scale(.88)}
-#arcadeLink:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+#arcadeLink:focus-visible{outline:3px solid var(--vi);outline-offset:3px}
 #app:has(.ov:not(.hide)) #arcadeLink{top:calc(18px + env(safe-area-inset-top))}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
 </style>
@@ -193,6 +173,7 @@ body{
     <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M24.00 2.84 C27.19 2.93 30.48 3.49 33.44 4.70 C36.39 5.91 39.79 7.65 41.72 10.08 C43.64 12.51 44.41 16.18 44.97 19.28 C45.53 22.39 45.73 25.72 45.08 28.74 C44.42 31.76 43.07 35.11 41.06 37.40 C39.05 39.69 35.87 41.15 33.03 42.47 C30.19 43.79 27.09 45.14 24.00 45.31 C20.91 45.47 17.40 44.72 14.49 43.46 C11.58 42.19 8.30 40.21 6.54 37.72 C4.78 35.22 4.45 31.57 3.93 28.51 C3.41 25.45 2.76 22.23 3.42 19.37 C4.08 16.52 6.10 13.90 7.91 11.36 C9.72 8.82 11.61 5.56 14.29 4.14 C16.97 2.72 20.81 2.75 24.00 2.84 Z" fill="#221D1F"/><g stroke="#EFF1EC" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M13.2 8.4V17.9"/><path d="M20.4 6.2V16.6"/><path d="M27.6 6.2V16.6"/><path d="M34.6 8.8V18.3"/></g><g fill="#EFF1EC"><ellipse cx="18.1" cy="25.2" rx="2" ry="2.3"/><ellipse cx="29.9" cy="25.2" rx="2" ry="2.3"/></g><path d="M19.9 32.3a4.6 4.6 0 0 0 8.2 0" fill="none" stroke="#EFF1EC" stroke-width="2.3" stroke-linecap="round"/></svg>
   </a>
   <canvas id="gl"></canvas>
+  <div id="weave"></div>
   <div id="flash"></div>
 
   <div id="pat"></div>
@@ -216,18 +197,18 @@ body{
   <button id="sndBtn" class="tool" aria-label="소리">🔊</button>
 
   <div class="ov" id="ovStart">
-    <h1>스스로를<br>사랑하기 <span style="color:var(--pink)">♥</span></h1>
+    <h1>스스로를<br>사랑하기 <span class="hh">♥</span></h1>
     <button id="ouro" aria-label="시작"><span class="halo"></span></button>
     <div id="ouroCap">시작</div>
     <button id="rankBtn" aria-label="순위">
       <svg viewBox="0 0 120 46" aria-hidden="true">
-        <g fill="#FFFDF6" stroke="#1E2630" stroke-width="2.1" stroke-linejoin="round">
+        <g fill="#FFF4DC" stroke="#3A1430" stroke-width="2.1" stroke-linejoin="round">
           <path transform="translate(24,28.9) scale(1.15)"
             d="M0,6.5 C-8.5,0.5 -8.5,-7 -3.4,-7 C-1.1,-7 0,-5.4 0,-4.2 C0,-5.4 1.1,-7 3.4,-7 C8.5,-7 8.5,0.5 0,6.5 Z"/>
           <path transform="translate(97,30.6) scale(.85)"
             d="M0,6.5 C-8.5,0.5 -8.5,-7 -3.4,-7 C-1.1,-7 0,-5.4 0,-4.2 C0,-5.4 1.1,-7 3.4,-7 C8.5,-7 8.5,0.5 0,6.5 Z"/>
         </g>
-        <path transform="translate(60,25.9) scale(1.55)" fill="#E8306B" stroke="#1E2630"
+        <path transform="translate(60,25.9) scale(1.55)" fill="#B85A8E" stroke="#3A1430"
           stroke-width="1.55" stroke-linejoin="round"
           d="M0,6.5 C-8.5,0.5 -8.5,-7 -3.4,-7 C-1.1,-7 0,-5.4 0,-4.2 C0,-5.4 1.1,-7 3.4,-7 C8.5,-7 8.5,0.5 0,6.5 Z"/>
       </svg>
@@ -321,19 +302,22 @@ const RANK={
 };
 
 /* ══════════ 밸런스 ══════════
-   안전창 = wait + wind + turn×0.686   (0.686 = 판정각까지 도는 데 걸리는 비율)
-   램프는 창을 짧게 만드는 대신 편차를 키우고 페이크를 늘립니다.
-   waitFloorMax 를 높게 유지해야 후반에도 최고 단계까지 갈 창이 남습니다.        */
+   얼굴은 기본으로 나를 쳐다본다. 가끔 뒤로 돌아설 때만 나를 사랑할 수 있다.
+   돌아서는 척(peek)과 돌아보는 척(fake)이 섞인다. 진짜로 돌아볼 때만 예비동작이 붙는다.
+   돌아서 있는 시간은 90초에 걸쳐 줄어들고, 인내심은 회복되지 않는다.             */
 const P={
-  waitMax:5.4, waitMin:2.7, waitFloorMax:5.0, waitFloorMin:1.2,
+  watchMin:1.6, watchMax:3.4,                     // 쳐다보는 시간
+  leaveDur:0.6,                                   // 돌아서는 데 걸리는 시간
+  awayMin:2.4, awayMax:4.8, awayFloorMin:0.8, awayFloorMax:2.4,   // 돌아서 있는 시간 (처음 → 90초 뒤)
   windDur:0.34, windFloor:0.20,
-  turnDur:0.95, turnFloor:0.55, frontHold:1.1, backDur:0.6,
-  fakeChance:0.14, fakeMax:0.52, rampTime:150,
+  turnDur:0.95, turnFloor:0.50,
+  fakeBack:0.15, fakeBackMax:0.55,                // 돌아보는 척
+  fakeAway:0.15, fakeAwayMax:0.40,                // 돌아서는 척
+  rampTime:90,
   catchAngle:0.62, patience:5, topCost:2, cooldown:0.45,
-  gagLock:1.55,                       // 헛구역질 동안은 아예 못 누른다
-  idleStare:8.0, idleSlap:12.0,
-  lowTier:1,                          // 0~1단계를 '낮은 단계'로 본다
-  healNeed:3, healStep:2              // 회복에 필요한 연속 횟수가 3 → 5 → 7 로 늘어난다
+  gagLock:1.55,                                   // 헛구역질 동안은 아예 못 누른다
+  wasteLimit:2,                                   // 돌아선 틈을 연속으로 이만큼 흘리면 노려보다 후려친다
+  stareHold:1.0                                   // 노려보다가 카운트다운이 시작되기까지
 };
 const VIEW={ headScale:1.32, headY:2.35, youScale:0.58, youY:-0.50, youTurn:0.12, camX:0.75 };
 
@@ -348,41 +332,24 @@ const TIERS=[
 ];
 const MAXT=TIERS[TIERS.length-1].at;
 
-/* ══════════ 멘트 ══════════ */
-const LINES={
-  "body": [
-    "나라도 나를 좋아해야지",
-    "내가 나까지 미워하면 어떡해",
-    "나한텐 나밖에 없어",
-    "이 정도는 해줘도 되잖아",
-    "나도 나름 애쓰고 있어",
-    "남들이 몰라줘서 그렇지",
-    "내가 그렇게까지 별론가",
-    "누가 안아주는 것도 아니고",
-    "나 정도면 괜찮은 사람이지",
-    "나한테만 왜 이렇게 박하지"
-  ],
-  "accept": [
-    "가만 보면 괜찮게 생겼어",
-    "자꾸 보니까 정드네",
-    "나도 사랑받을 수 있지",
-    "아직 날 알아본 사람이 없는 거지",
-    "이 정도면 매력 있지 않나",
-    "난 내가 제일 잘 알아",
-    "내가 나 좋다는데",
-    "좋아하는 데 이유가 꼭 있어야 돼",
-    "내가 뭐 어때서",
-    "나 정도면 사랑해줄 만하지"
-  ]
-};
-const recent={body:[],accept:[]};
-function pickLine(cat){
-  const pool=LINES[cat].filter(l=>!recent[cat].includes(l));
-  const src=pool.length?pool:LINES[cat];
-  const l=src[Math.floor(Math.random()*src.length)];
-  recent[cat].push(l);
-  if(recent[cat].length>5)recent[cat].shift();
-  return l;
+/* ══════════ 멘트 ══════════
+   단계와 상관없이 17개 가운데 하나. 한 바퀴 다 나오기 전에는 같은 말이 다시 나오지 않는다. */
+const LINES=[
+  "나는 있는 그대로 소중하다","나는 충분히 잘하고 있다","나는 나를 아끼고 돌본다","나는 오늘도 최선을 다했다",
+  "나는 나의 가장 좋은 친구다","나는 지금 이대로 충분하다","나는 내 마음을 존중한다","나는 나를 사랑한다",
+  "나는 날마다 모든 면에서 점점 더 좋아지고 있다","나는 내 모습 그대로 아름답다","나는 행복해질 자격이 있다",
+  "나는 세상에 하나뿐인 존재다","나는 나를 온전히 받아들인다","나는 내 삶의 주인이다","나는 빛나는 사람이다",
+  "나는 사랑으로 가득 차 있다","나는 내가 자랑스럽다"
+];
+let lineBag=[],lastLine="";
+function pickLine(){
+  if(!lineBag.length){
+    lineBag=LINES.slice();
+    for(let i=lineBag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=lineBag[i];lineBag[i]=lineBag[j];lineBag[j]=t;}
+    if(lineBag[lineBag.length-1]===lastLine){const t=lineBag[0];lineBag[0]=lineBag[lineBag.length-1];lineBag[lineBag.length-1]=t;}
+  }
+  lastLine=lineBag.pop();
+  return lastLine;
 }
 
 /* ══════════ 소리 ══════════ */
@@ -431,7 +398,7 @@ function throat(at,f0,f1,dur,vol,formants,growl){
   g.gain.exponentialRampToValueAtTime(vol,t0+.035);
   g.gain.setValueAtTime(vol,t0+dur*.55);
   g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  mix.connect(g); g.connect(c.destination);
+  mix.connect(g); g.connect(out());
   o.start(t0);o2.start(t0);lfo.start(t0);
   o.stop(t0+dur+.05);o2.stop(t0+dur+.05);lfo.stop(t0+dur+.05);
 }
@@ -449,7 +416,7 @@ function wet(at,dur,vol,f0,f1,q,type){
   g.gain.setValueAtTime(.0001,t0);
   g.gain.exponentialRampToValueAtTime(vol,t0+Math.min(.03,dur*.2));
   g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  s.connect(f);f.connect(g);g.connect(c.destination);
+  s.connect(f);f.connect(g);g.connect(out());
   s.start(t0);s.stop(t0+dur+.05);
 }
 /* 꿀렁거림 */
@@ -465,7 +432,7 @@ function gurgle(at,dur,vol,rate){
   g.gain.setValueAtTime(.0001,t0);
   g.gain.exponentialRampToValueAtTime(vol,t0+.06);
   g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  s.connect(bp);bp.connect(g);g.connect(c.destination);
+  s.connect(bp);bp.connect(g);g.connect(out());
   s.start(t0);s.stop(t0+dur+.05);lfo.start(t0);lfo.stop(t0+dur+.05);
 }
 /* 통통 튀는 음 */
@@ -478,7 +445,7 @@ function pluck(at,f,vol,dur){
     g.gain.setValueAtTime(.0001,t0);
     g.gain.exponentialRampToValueAtTime(vol*a,t0+.006);
     g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-    o.connect(g);g.connect(c.destination);o.start(t0);o.stop(t0+dur+.02);
+    o.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.02);
   });
 }
 /* 뽕 */
@@ -492,7 +459,7 @@ function pop(at,f0,f1,vol,dur){
   g.gain.setValueAtTime(.0001,t0);
   g.gain.exponentialRampToValueAtTime(vol,t0+.008);
   g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  o.connect(g);g.connect(c.destination);o.start(t0);o.stop(t0+dur+.02);
+  o.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.02);
 }
 /* 미끄러지는 휘파람 */
 function slide(at,f0,f1,dur,vol){
@@ -507,470 +474,506 @@ function slide(at,f0,f1,dur,vol){
   g.gain.exponentialRampToValueAtTime(vol,t0+.03);
   g.gain.setValueAtTime(vol,t0+dur*.7);
   g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t0);o.stop(t0+dur+.03);
+  o.connect(lp);lp.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.03);
 }
 
-/* 가단조 하강 — 라 솔 파 레 */
-const NOTES=[440.00,392.00,349.23,293.66];
+/* 모든 소리는 압축기를 한 번 거쳐 나간다 — 겹쳐도 찢어지지 않고 타격이 단단해진다 */
+let OUT=null;
+function out(){
+  const c=ac();if(!c)return null;
+  if(!OUT){
+    const comp=c.createDynamicsCompressor();
+    comp.threshold.value=-16;comp.knee.value=10;comp.ratio.value=4;comp.attack.value=.003;comp.release.value=.2;
+    const g=c.createGain();g.gain.value=1.25;comp.connect(g);g.connect(c.destination);OUT=comp;
+  }
+  return OUT;
+}
+/* 노이즈 한 줄기 — 필터를 f0 에서 f1 로 쓸고, att 동안 차오른 뒤 사라진다 */
+function nz(at,dur,vol,type,f0,f1,q,att){
+  if(!sndOn)return;const c=ac();if(!c)return;
+  const t0=now()+at;
+  const s=c.createBufferSource();s.buffer=nbuf();s.loop=true;s.playbackRate.value=.85+Math.random()*.3;
+  const f=c.createBiquadFilter();f.type=type||"bandpass";f.Q.value=q||1;
+  f.frequency.setValueAtTime(f0,t0);f.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t0+dur);
+  const g=c.createGain(),a=Math.max(.002,Math.min(dur*.9,att||.01));
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+a);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(out());s.start(t0);s.stop(t0+dur+.05);
+}
+/* 몸에 닿는 둔탁한 소리 — 낮게 꺼지는 사인 + 짧은 마찰 */
+function thump(at,f0,f1,dur,vol){
+  if(!sndOn)return;const c=ac();if(!c)return;
+  const t0=now()+at;
+  const o=c.createOscillator();o.type="sine";
+  o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t0+dur);
+  const g=c.createGain();g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.005);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.03);
+  nz(at,Math.min(.06,dur*.4),vol*.35,"lowpass",900,200,.7,.002);
+}
+/* 낮게 웅 하고 깔리는 소리 */
+function hum(at,dur,vol,f0,f1){
+  if(!sndOn)return;const c=ac();if(!c)return;
+  const t0=now()+at;
+  const o=c.createOscillator();o.type="sine";
+  o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t0+dur);
+  const g=c.createGain();g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+dur*.4);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.03);
+}
+/* 뼈가 꺾이는 '딱' */
+function crack(at,vol,f){const fr=f||2600;nz(at,.035,vol,"bandpass",fr,fr*.7,3,.001);nz(at,.02,vol*.6,"highpass",5200,3000,1,.001);}
+/* 살이 비틀리며 삐걱거림 — 낮은 톱니를 빠르게 끊어서 */
+function creak(at,dur,vol,f){
+  if(!sndOn)return;const c=ac();if(!c)return;
+  const t0=now()+at;
+  const o=c.createOscillator();o.type="sawtooth";
+  o.frequency.setValueAtTime(f,t0);o.frequency.linearRampToValueAtTime(f*1.35,t0+dur*.6);o.frequency.linearRampToValueAtTime(f*.9,t0+dur);
+  const am=c.createGain();am.gain.value=.5;
+  const lfo=c.createOscillator();lfo.type="square";lfo.frequency.setValueAtTime(22,t0);lfo.frequency.linearRampToValueAtTime(34,t0+dur);
+  const lg=c.createGain();lg.gain.value=.5;lfo.connect(lg);lg.connect(am.gain);
+  const bp=c.createBiquadFilter();bp.type="bandpass";bp.frequency.value=f*7;bp.Q.value=2.2;
+  const g=c.createGain();g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+dur*.35);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(am);am.connect(bp);bp.connect(g);g.connect(out());
+  o.start(t0);lfo.start(t0);o.stop(t0+dur+.05);lfo.stop(t0+dur+.05);
+}
+/* 두세 겹으로 어긋나 겹치는 '후우웅' — 화면의 잔상과 같은 박자 */
+function whooshD(at,dur,vol,f0,f1){
+  [[0,1,1],[.05,.55,1.07],[.11,.32,1.14]].forEach(([d,v,m])=>nz(at+d,dur,vol*v,"bandpass",f0*m,f1*m,1.4,dur*.5));
+  hum(at,dur*.9,vol*.55,72,54);
+}
+/* 유리 '팅' */
+function ting(at,f,vol,dur){
+  if(!sndOn)return;const c=ac();if(!c)return;
+  const t0=now()+at;
+  [[1,1],[2.76,.32],[5.4,.12]].forEach(([m,a])=>{
+    const o=c.createOscillator();o.type="sine";o.frequency.value=f*m;
+    const g=c.createGain();g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol*a,t0+.003);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+Math.min(dur,dur/m*1.3));
+    o.connect(g);g.connect(out());o.start(t0);o.stop(t0+dur+.05);
+  });
+}
+/* 입술 '쪽' */
+function smack(at,vol){nz(at,.018,vol,"highpass",4500,3000,1,.001);pop(at+.004,1500,420,vol*.7,.06);nz(at+.01,.07,vol*.35,"bandpass",1800,900,2.5,.004);}
+/* 옷 구겨지는 소리 */
+function rustle(at,dur,vol){for(let i=0;i<14;i++)nz(at+Math.random()*dur,.025+Math.random()*.04,vol*(.5+Math.random()*.5),"bandpass",2600+Math.random()*2600,2000,1.8,.003);}
+/* 숨 — 들이쉬면 차오르고, 내쉬면 빠진다 */
+function breath(at,dur,vol,inhale){nz(at,dur,vol,"bandpass",inhale?900:2200,inhale?2600:700,.9,inhale?dur*.75:.04);}
+/* 바닥에 '철퍽' */
+function splat(at,vol){nz(at,.22,vol,"lowpass",1600,180,.9,.003);thump(at,120,45,.16,vol*.6);
+  for(let i=0;i<5;i++)nz(at+.03+Math.random()*.2,.05,vol*.25,"bandpass",2400+Math.random()*1500,900,2.4,.003);}
+
+/* 단계마다 그 동작에서 몸이 내는 소리 */
+const BODY={
+  chest(){ thump(0,150,60,.16,.32); thump(.30,92,46,.13,.22); thump(.45,84,42,.12,.15); },                 // 툭 + 두근
+  pat(){ nz(0,.17,.11,"bandpass",1500,3800,1.2,.06); nz(.21,.17,.10,"bandpass",1400,3600,1.2,.06); thump(0,190,100,.07,.07); }, // 스윽 스윽
+  cheeks(){ thump(0,330,140,.15,.20); nz(0,.13,.10,"bandpass",1300,450,2,.006); },                          // 볼이 눌리는 '뭉'
+  hug(){ rustle(0,.34,.10); breath(.03,.36,.09,true); thump(.08,120,58,.12,.13); },                        // 옷 구겨짐 + 들숨
+  mirror(){ ting(0,1568,.13,1.1); ting(.015,2349,.05,.8); },                                               // 팅
+  kiss(){ smack(0,.24); }                                                                                   // 쪽
+};
 const SFX={
-  tier(i){ const f=NOTES[Math.min(i,3)];
-    pluck(0,f,.26,.58); pluck(.02,f*1.5,.09,.42); pop(0,f*.5,f*.42,.07,.10); },
-  bank(){ pluck(0,349.23,.24,.46); pluck(.11,261.63,.22,.80); },
-  /* 진짜로 돌기 직전 — 숨을 들이켜며 움츠린다. 낮고 길다. */
-  wind(){ wet(0,.32,.085,240,1500,1.1,"lowpass"); pop(0,110,190,.055,.26); },
-  /* 페이크 — 예비동작 없이 바로 도는 마른 소리 */
-  turn(){ wet(0,.14,.050,3200,1500,.8,"highpass"); },
-  heal(){ pluck(0,293.66,.20,.50); pluck(.10,392.00,.20,.62); pluck(.22,523.25,.17,.92); },
+  tier(i){ (BODY[TIERS[i].pose]||BODY.chest)(); },
+  bank(){ thump(0,112,38,.36,.42); crack(0,.05,1900); },                                    // 묵직한 '쿵'
+  /* 진짜로 돌기 직전 — 목이 뚜둑 꺾이며 살이 비틀린다 */
+  wind(){ crack(0,.22,2700); crack(.075,.17,2200); creak(.10,.36,.12,74); thump(.02,95,52,.16,.12); },
+  /* 도는 동안 — 페이크든 진짜든 같은 소리. 진짜는 그 앞에 '뚜둑'이 붙는다 */
+  turn(){ whooshD(0,.62,.12,260,950); },
+  heal(){ breath(0,.55,.06,false); hum(.05,.7,.05,196,190); },
   caught(){
-    slide(0,980,300,.34,.10);                       // 미끄러져 내려가는 실패음
-    throat(0,150,62,.22,.13,[[420,6,1],[880,8,.5]],30);
-    wet(0,.30,.16,1200,260,1);
+    thump(0,140,52,.22,.34);
+    throat(0,130,52,.26,.15,[[380,6,1],[820,8,.5]],30);
+    wet(0,.30,.18,1000,220,1);
     SFX.retch(.16);
   },
   retch(d){
     const t=d||0;
-    wet(t,.09,.08,3400,1600,1,"highpass");          // 숨 들이킴
-    throat(t+.09,215,92,.30,.15,[[540,7,1],[1180,9,.6],[2400,6,.24]],26);
-    wet(t+.09,.30,.12,950,300,1);
-    throat(t+.52,175,70,.36,.17,[[470,7,1],[1050,9,.62],[2200,6,.28]],22);
-    wet(t+.52,.38,.14,820,240,1);
-    gurgle(t+.55,.34,.07,13);
+    wet(t,.09,.08,3400,1600,1,"highpass");                                                 // 숨 들이킴
+    throat(t+.09,170,70,.32,.17,[[430,6,1],[960,8,.6],[2000,6,.22]],24); thump(t+.09,110,50,.16,.16);
+    wet(t+.09,.32,.15,900,240,1); gurgle(t+.14,.26,.06,15);
+    throat(t+.54,140,58,.40,.19,[[400,6,1],[900,8,.62],[1900,6,.26]],20); thump(t+.54,100,46,.18,.18);
+    wet(t+.54,.42,.17,780,200,1); gurgle(t+.58,.40,.09,12);
   },
   puke(){
-    throat(0,145,55,.55,.20,[[420,6,1],[900,8,.68],[1900,5,.32]],18);
-    wet(0,.50,.24,1500,300,1);
+    throat(0,125,48,.6,.22,[[380,6,1],[820,8,.68],[1700,5,.3]],18); thump(0,105,42,.22,.24);
+    wet(0,.50,.26,1400,260,1);
     // 주르르 — 끊기지 않게 세 겹으로 겹쳐 끝까지 흐른다
-    wet(.26,1.30,.20,820,470,1.3);
-    wet(1.30,1.30,.18,700,420,1.3);
-    wet(.40,2.30,.11,1400,700,.9);
-    gurgle(.28,1.40,.14,9);
-    gurgle(1.55,1.20,.12,7);
-    for(let i=0;i<18;i++)                            // 튀는 방울
-      wet(.40+Math.random()*2.15,.07,.06+Math.random()*.05,2800,900,2.4,"bandpass");
-    throat(1.75,125,50,.44,.17,[[400,6,1],[860,8,.6]],16);
-    wet(1.75,.48,.18,900,250,1);
-    wet(2.55,.12,.07,1800,500,2,"bandpass");
+    wet(.26,1.30,.22,780,420,1.3);
+    wet(1.30,1.30,.20,680,380,1.3);
+    wet(.40,2.30,.12,1300,650,.9);
+    gurgle(.28,1.40,.15,9);
+    gurgle(1.55,1.20,.13,7);
+    for(let i=0;i<18;i++)                                                                  // 튀는 방울
+      wet(.40+Math.random()*2.15,.07,.06+Math.random()*.05,2600,850,2.4,"bandpass");
+    throat(1.75,110,44,.48,.18,[[360,6,1],[780,8,.6]],16);
+    wet(1.75,.48,.20,850,220,1);
+    splat(.42,.28); splat(1.35,.20); splat(2.5,.42);                                       // 바닥에 철퍽 — 마지막이 가장 크다
   },
-  whoosh(){ wet(0,.26,.09,1900,520,1.3,"bandpass"); },
+  spit(){ throat(0,150,60,.32,.16,[[420,6,1],[900,8,.6]],22); wet(0,.5,.2,1200,300,1); gurgle(.05,.55,.1,11); splat(.32,.22); },   // 찔끔
+  whoosh(){ whooshD(0,.42,.20,380,2300); },                                                // 손을 휘두르는 바람
   slap(){
-    wet(0,.05,.34,6500,2400,1,"highpass");        // 짝
-    wet(0,.20,.24,900,110,1);                     // 퍽
-    pop(0,190,55,.18,.16);
-    slide(.07,760,150,.62,.075);                  // 날아가는 소리
-    pluck(.70,392,.10,.4);
+    nz(0,.04,.45,"highpass",7000,3200,1,.001);                                             // 철
+    nz(0,.13,.32,"bandpass",1900,650,1.1,.002);                                            // 썩
+    thump(0,180,48,.26,.44);
+    thump(.95,95,40,.30,.38); nz(.95,.2,.20,"lowpass",700,120,.8,.003);                    // 날아가 바닥에 '쿵'
   },
-  sigh(){ wet(0,.62,.055,1100,280,1); },          // 후려친 뒤의 한숨
-  quiet(){ pluck(0,329.63,.10,.7); pluck(.26,220,.09,1.2); },
+  sigh(){ wet(0,.62,.055,1100,280,1); },                                                   // 후려친 뒤의 한숨
+  quiet(){ hum(0,1.6,.07,110,104); hum(.04,1.5,.035,165,158); },
+  count(n){ const v=n===1?.44:.30; thump(0,n===1?82:94,36,.30,v); thump(.17,n===1?74:86,34,.24,v*.6); },  // 심장 박동
   tick(){ pop(0,600,900,.06,.05); }
 };
 
-/* ══════════ 3D ══════════ */
+/* ══════════ 3D — 베이컨 ══════════ */
 const canvas=document.getElementById("gl");
-let renderer,scene,camera,head,you,parts,ok3d=true;
-try{
-  if(!window.THREE)throw new Error("no three");
-  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-}catch(e){
-  ok3d=false;
-  document.getElementById("nogl").style.display="flex";
-  canvas.style.display="none";
-}
+let ok3d=true,BC=null;
+const PI=Math.PI;
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
+const sstep=(a,b,x)=>{const k=clamp((x-a)/(b-a),0,1);return k*k*(3-2*k);};
+function hash(n){n=(n<<13)^n;return 1-((n*(n*n*15731+789221)+1376312589)&0x7fffffff)/1073741824;}
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+const G2=(u,v,cu,cv,su,sv)=>Math.exp(-((u-cu)*(u-cu))/(su*su)-((v-cv)*(v-cv))/(sv*sv));
 
-const SKIN=0xF0C49A, SKIN_D=0xD9A278, INK=0x1E2630, HAIR=0x231C1A;
+/* 캔버스 천 질감 — 화면 위에 곱하기로 얹는다 (시작·끝 화면에도 쓴다) */
+(function(){
+  const c=document.createElement("canvas");c.width=c.height=160;const g=c.getContext("2d"),r=rng(12);
+  g.fillStyle="#FFFFFF";g.fillRect(0,0,160,160);
+  for(let y=0;y<160;y+=4)for(let x=0;x<160;x+=4){const v=226+r()*22,h=((x+y)/4)%2;
+    g.fillStyle="rgb("+Math.round(v)+","+Math.round(v-4)+","+Math.round(v-10)+")";g.fillRect(x,y,h?4:3,h?3:4);}
+  for(let i=0;i<500;i++){g.fillStyle=r()<.5?"rgba(90,60,40,.10)":"rgba(255,255,255,.4)";g.fillRect(r()*160,r()*160,1,1+r()*3);}
+  document.getElementById("app").style.setProperty("--weave","url("+c.toDataURL()+")");
+})();
 
-function build3D(){
+function buildBacon(){
+  let renderer;
+  try{
+    if(!window.THREE)throw new Error("no three");
+    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+  }catch(e){
+    ok3d=false;document.getElementById("nogl").style.display="flex";canvas.style.display="none";return null;
+  }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   renderer.outputEncoding=THREE.sRGBEncoding;
-  renderer.toneMapping=THREE.NoToneMapping;      // ACES 를 걸면 색이 눌려서 바랜다
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-
-  scene=new THREE.Scene();
-  camera=new THREE.PerspectiveCamera(34,1,0.1,100);
-
-  // 주광 하나를 세게 세우고 나머지는 낮게 — 그래야 명암이 남는다
-  scene.add(new THREE.HemisphereLight(0xFFF0D2,0x6E7B62,0.42));
-  const key=new THREE.DirectionalLight(0xFFF1D6,1.25);
-  key.position.set(3.4,5.2,3.6);
-  key.castShadow=true;
-  key.shadow.mapSize.set(1024,1024);
-  key.shadow.camera.left=-6;key.shadow.camera.right=6;
-  key.shadow.camera.top=8;key.shadow.camera.bottom=-4;
-  key.shadow.camera.near=0.5;key.shadow.camera.far=24;
-  scene.add(key);
-  const bounce=new THREE.DirectionalLight(0xC98C5E,0.22);
-  bounce.position.set(-3.0,-1.2,2.0); scene.add(bounce);
-  const rim=new THREE.DirectionalLight(0x7FA8D8,0.55);
-  rim.position.set(-2.2,2.4,-4.6); scene.add(rim);
-
-  const M=(c,r,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:r==null?.85:r,metalness:0},o||{}));
-  const mSkin=M(SKIN,.82), mSkinD=M(SKIN_D,.85), mInk=M(INK,.4), mHair=M(HAIR,.58);
-  const mWhite=M(0xFFFDF6,.24);
-  const mGreen=new THREE.MeshStandardMaterial({color:0x7FA331,roughness:.75,transparent:true,opacity:0});
-  const mBlush=new THREE.MeshStandardMaterial({color:0xE0665A,roughness:.85,transparent:true,opacity:0});
-  const mBile=M(0x8FB03F,.45), mBile2=M(0xB4C95C,.5);
-  const mSweat=new THREE.MeshStandardMaterial({color:0xB9DCF2,roughness:.08,transparent:true,opacity:.9});
-
-  /* ── 거대한 얼굴 ── */
-  head=new THREE.Group();
-  head.position.set(0,VIEW.headY,-1.0);
-  head.scale.setScalar(VIEW.headScale);
-  scene.add(head);
-
-  const skull=new THREE.Mesh(new THREE.SphereGeometry(1,60,48),mSkin);
-  skull.scale.set(1,1.06,.98); skull.castShadow=true; head.add(skull);
-  const jaw=new THREE.Mesh(new THREE.SphereGeometry(.68,44,34),mSkin);
-  jaw.position.set(0,-.55,.1); jaw.scale.set(.97,.84,.94); jaw.castShadow=true; head.add(jaw);
-
-  // 귀
-  [-1,1].forEach(s=>{
-    const ear=new THREE.Mesh(new THREE.SphereGeometry(.23,24,20),mSkin);
-    ear.position.set(.97*s,-.06,-.01); ear.scale.set(.32,1.06,.74);
-    ear.castShadow=true; head.add(ear);
-    const inn=new THREE.Mesh(new THREE.SphereGeometry(.14,18,14),mSkinD);
-    inn.position.set(1.02*s,-.07,.04); inn.scale.set(.26,.92,.62); head.add(inn);
-  });
-  // 머리카락 네 가닥 — 두피를 따라 앞으로 내려앉는다
-  const hairs=[];
-  function hairStrand(offset,dir,phiEnd){
-    const pts=[],STEPS=20;
-    for(let i=0;i<=STEPS;i++){
-      const phi=.15+(phiEnd-.15)*(i/STEPS);
-      const o=offset*(1+Math.sin(phi)*.24);
-      const a=dir>0?o:(Math.PI-o), r=1.05;
-      pts.push(new THREE.Vector3(
-        Math.sin(phi)*Math.sin(a)*r,
-        Math.cos(phi)*r*1.06,
-        Math.sin(phi)*Math.cos(a)*r*.98));
+  const col=h=>new THREE.Color(h).convertSRGBToLinear();
+  function taperTube(nPts,radial,radiusFn){
+    const geo=new THREE.BufferGeometry();
+    const vc=nPts*radial+2;
+    const pos=new Float32Array(vc*3),nor=new Float32Array(vc*3),idx=[];
+    for(let i=0;i<nPts-1;i++)for(let j=0;j<radial;j++){
+      const a=i*radial+j,b=i*radial+(j+1)%radial,c=(i+1)*radial+j,d=(i+1)*radial+(j+1)%radial;
+      idx.push(a,c,b,b,c,d);
     }
-    const m=new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),30,.072,10,false),mHair);
-    head.add(m); hairs.push(m);
-  }
-  [-.80,-.28,.28,.80].forEach(o=>{
-    hairStrand(o, 1,1.08);   // 앞머리 — 이마 위에서 끝난다
-    hairStrand(o,-1,1.76);   // 뒷머리 — 뒤통수를 덮고 내려온다
-  });
-  const crown=new THREE.Mesh(new THREE.SphereGeometry(.19,20,16),mHair);
-  crown.position.set(0,1.055,-.02); crown.scale.set(1,.4,1); head.add(crown);
-
-  // 입 주변 돌출 — 눈두덩처럼 살이 앞으로 나온다
-  const muzzle=new THREE.Mesh(new THREE.SphereGeometry(.42,30,24),mSkin);
-  muzzle.position.set(0,-.34,.70); muzzle.scale.set(1.02,.70,.74);
-  muzzle.castShadow=true; head.add(muzzle);
-  const lipTop=new THREE.Mesh(new THREE.SphereGeometry(.20,20,16),mSkin);
-  lipTop.position.set(0,-.26,1.00); lipTop.scale.set(1.12,.40,.40); head.add(lipTop);
-  const lipBot=new THREE.Mesh(new THREE.SphereGeometry(.20,20,16),mSkin);
-  lipBot.position.set(0,-.44,.99); lipBot.scale.set(.98,.46,.40); head.add(lipBot);
-
-  const nose=new THREE.Mesh(new THREE.SphereGeometry(.16,24,20),mSkin);
-  nose.position.set(0,-.09,.93); nose.scale.set(.72,.98,1.2); nose.castShadow=true; head.add(nose);
-  [-1,1].forEach(s=>{
-    const n=new THREE.Mesh(new THREE.SphereGeometry(.036,10,8),mSkinD);
-    n.position.set(.075*s,-.175,1.00); head.add(n);
-  });
-
-  const eyes=[];
-  [-1,1].forEach(s=>{
-    const g=new THREE.Group(); g.position.set(.355*s,.12,.76);
-    const white=new THREE.Mesh(new THREE.SphereGeometry(.19,26,20),M(0xEFE7DA,.5));
-    white.scale.set(1,.86,.72); g.add(white);
-    const iris=new THREE.Mesh(new THREE.SphereGeometry(.088,22,18),M(0x14181E,.7));
-    iris.position.set(0,0,.135); iris.scale.set(1,1,.62); g.add(iris);
-    head.add(g);
-    const lid=new THREE.Mesh(new THREE.SphereGeometry(.205,26,18,0,Math.PI*2,0,Math.PI*.52),mSkin);
-    lid.position.set(.355*s,.255,.755); lid.scale.set(1,.9,.78); head.add(lid);
-    eyes.push({g,lid,side:s});
-  });
-  // 질끈 감은 눈 — 헛구역질할 때만
-  const eyeShut=new THREE.Group(); eyeShut.visible=false; head.add(eyeShut);
-  [-1,1].forEach(s=>{
-    const arc=new THREE.Mesh(new THREE.TorusGeometry(.155,.036,10,26,Math.PI),mInk);
-    arc.position.set(.355*s,.09,.82); arc.rotation.x=-.12; eyeShut.add(arc);
-  });
-  const brows=[];
-  [-1,1].forEach(s=>{
-    const b=new THREE.Mesh(new THREE.BoxGeometry(.36,.072,.09),mInk);
-    b.position.set(.365*s,.44,.80); b.rotation.x=-.2;
-    head.add(b); brows.push({m:b,side:s});
-  });
-  // 무표정 — 그냥 그어진 선
-  const mouthFlat=new THREE.Mesh(new THREE.BoxGeometry(.50,.058,.07),mInk);
-  mouthFlat.position.set(0,-.345,1.045); head.add(mouthFlat);
-  // 찌푸린 입 — 역겨울수록 커진다
-  const mouthLine=new THREE.Mesh(new THREE.TorusGeometry(.24,.045,12,34,Math.PI),mInk);
-  mouthLine.position.set(0,-.35,1.055); mouthLine.rotation.x=-.16;
-  mouthLine.scale.setScalar(.01); head.add(mouthLine);
-  const mouthOpen=new THREE.Mesh(new THREE.SphereGeometry(.24,28,24),M(0x4A1C1C,.5));
-  mouthOpen.position.set(0,-.38,.94); mouthOpen.scale.set(.9,.6,.45); mouthOpen.visible=false;
-  head.add(mouthOpen);
-  const tongue=new THREE.Mesh(new THREE.SphereGeometry(.14,18,14),M(0xB55C63,.55));
-  tongue.position.set(0,-.45,1.03); tongue.scale.set(1,.5,.8); tongue.visible=false; head.add(tongue);
-
-  const cheeks=[],blushes=[];
-  [-1,1].forEach(s=>{
-    const c=new THREE.Mesh(new THREE.SphereGeometry(.30,22,18),mSkin);
-    c.position.set(.62*s,-.26,.60); c.scale.setScalar(.01); head.add(c); cheeks.push(c);
-    const b=new THREE.Mesh(new THREE.SphereGeometry(.24,20,16),mBlush.clone());
-    b.position.set(.60*s,-.20,.72); b.scale.set(1,.7,.24); head.add(b); blushes.push(b);
-  });
-  const tint=new THREE.Mesh(new THREE.SphereGeometry(1.014,48,36),mGreen);
-  tint.scale.set(1,1.06,.98); head.add(tint);
-  const sweat=new THREE.Mesh(new THREE.SphereGeometry(.09,14,12),mSweat);
-  sweat.scale.set(1,1.5,.8); sweat.visible=false; head.add(sweat);
-
-  // 토사물 — 입 위치를 따라다니되 중력은 월드 기준으로 받는다
-  const mouthAnchor=new THREE.Object3D();
-  mouthAnchor.position.set(0,-.52,1.03); head.add(mouthAnchor);
-  const spew=new THREE.Group(); spew.visible=false; scene.add(spew);
-  const strand=new THREE.Mesh(new THREE.CylinderGeometry(.09,.19,1,16),mBile);
-  spew.add(strand);
-  const lipDrip=new THREE.Mesh(new THREE.SphereGeometry(.16,16,14),mBile2);
-  lipDrip.scale.set(1.5,.7,1); spew.add(lipDrip);
-  const drops=[];
-  for(let i=0;i<30;i++){
-    const d=new THREE.Mesh(new THREE.SphereGeometry(.065+Math.random()*.085,10,9),i%3?mBile:mBile2);
-    d.userData={life:Math.random()*1.4,vx:0,vy:0,vz:0};
-    spew.add(d); drops.push(d);
+    const s=nPts*radial,e=s+1;
+    for(let j=0;j<radial;j++){idx.push(s,j,(j+1)%radial);idx.push(e,(nPts-1)*radial+(j+1)%radial,(nPts-1)*radial+j);}
+    geo.setIndex(idx);
+    geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+    geo.setAttribute("normal",new THREE.BufferAttribute(nor,3));
+    const T=new THREE.Vector3(),N=new THREE.Vector3(),B=new THREE.Vector3(),up=new THREE.Vector3(),V=new THREE.Vector3();
+    geo.update=function(pts){
+      let prevN=null;
+      for(let i=0;i<nPts;i++){
+        const p=pts[i],q=pts[Math.min(nPts-1,i+1)],o=pts[Math.max(0,i-1)];
+        T.subVectors(q,o).normalize();
+        if(!prevN){up.set(0,0,1);if(Math.abs(T.dot(up))>.9)up.set(1,0,0);N.crossVectors(T,up).normalize();}
+        else{N.copy(prevN).sub(V.copy(T).multiplyScalar(prevN.dot(T))).normalize();}
+        B.crossVectors(T,N);prevN=N.clone();
+        const r=radiusFn(i/(nPts-1));
+        for(let j=0;j<radial;j++){
+          const a=j/radial*Math.PI*2,cx=Math.cos(a),sy=Math.sin(a);
+          const k=(i*radial+j)*3;
+          const nx=N.x*cx+B.x*sy,ny=N.y*cx+B.y*sy,nz=N.z*cx+B.z*sy;
+          pos[k]=p.x+nx*r;pos[k+1]=p.y+ny*r;pos[k+2]=p.z+nz*r;
+          nor[k]=nx;nor[k+1]=ny;nor[k+2]=nz;
+        }
+      }
+      const a=pts[0],b=pts[nPts-1];
+      pos[s*3]=a.x;pos[s*3+1]=a.y;pos[s*3+2]=a.z;pos[e*3]=b.x;pos[e*3+1]=b.y;pos[e*3+2]=b.z;
+      T.subVectors(pts[0],pts[1]).normalize();nor[s*3]=T.x;nor[s*3+1]=T.y;nor[s*3+2]=T.z;
+      T.subVectors(pts[nPts-1],pts[nPts-2]).normalize();nor[e*3]=T.x;nor[e*3+1]=T.y;nor[e*3+2]=T.z;
+      geo.attributes.position.needsUpdate=true;geo.attributes.normal.needsUpdate=true;
+      geo.computeBoundingSphere();
+    };
+    return geo;
   }
 
-  /* ── 나 — 이쪽을 보고 있다 ── */
-  you=new THREE.Group();
-  you.position.set(-.05,VIEW.youY,2.2);
-  you.scale.setScalar(VIEW.youScale);
-  you.rotation.y=VIEW.youTurn;
-  scene.add(you);
+  const scene=new THREE.Scene();scene.background=new THREE.Color("#F07526");
+  const camera=new THREE.PerspectiveCamera(36,.5625,.1,200);
 
-  const mVest=M(0xA83E2E,.8), mShirt=M(0xFFFCF2,.75), mPants=M(0x2C3A4A,.8);
-  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.44,.54,1.05,22),mVest);
-  torso.position.y=-.05; torso.castShadow=true; you.add(torso);
-  const shirtV=new THREE.Mesh(new THREE.SphereGeometry(.30,20,16),mShirt);
-  shirtV.position.set(0,.36,.34); shirtV.scale.set(.8,.7,.3); you.add(shirtV);
-  const tie=new THREE.Mesh(new THREE.BoxGeometry(.12,.36,.06),M(0x7E2B25,.6));
-  tie.position.set(0,.20,.46); tie.rotation.x=-.14; you.add(tie);
-  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.30,.36,.20,20),mShirt);
-  collar.position.y=.50; you.add(collar);
-  const yNeck=new THREE.Mesh(new THREE.CylinderGeometry(.15,.17,.26,14),mSkinD);
-  yNeck.position.y=.62; you.add(yNeck);
-  const hips=new THREE.Mesh(new THREE.CylinderGeometry(.50,.44,.34,20),mPants);
-  hips.position.y=-.70; you.add(hips);
-  [-1,1].forEach(s=>{
-    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.20,.17,1.00,14),mPants);
-    leg.position.set(.22*s,-1.36,0); you.add(leg);
-  });
-
-  // 얼굴
-  const yHead=new THREE.Group(); yHead.position.y=.98; you.add(yHead);
-  const yFace=new THREE.Mesh(new THREE.SphereGeometry(.46,34,28),mSkin);
-  yFace.scale.set(1,1.06,.98); yFace.castShadow=true; yHead.add(yFace);
-  const yBack=new THREE.Mesh(
-    new THREE.SphereGeometry(.482,34,26,Math.PI*0.90,Math.PI*1.20,0,Math.PI*0.80),mHair);
-  yBack.scale.set(1,1.06,.98); yHead.add(yBack);
-  const yFringe=new THREE.Mesh(
-    new THREE.SphereGeometry(.485,34,20,Math.PI*0.10,Math.PI*0.80,0,Math.PI*0.32),mHair);
-  yFringe.scale.set(1,1.06,.98); yHead.add(yFringe);
-  [-1,1].forEach(s=>{
-    const ear=new THREE.Mesh(new THREE.SphereGeometry(.10,14,12),mSkinD);
-    ear.position.set(.44*s,-.03,-.01); ear.scale.set(.4,1,.7); yHead.add(ear);
-  });
-  const yNose=new THREE.Mesh(new THREE.SphereGeometry(.062,14,12),mSkin);
-  yNose.position.set(0,-.05,.44); yNose.scale.set(.8,.9,1.1); yHead.add(yNose);
-
-  const yEyesOpen=new THREE.Group(); yHead.add(yEyesOpen);
-  const yPupils=[];
-  [-1,1].forEach(s=>{
-    const w=new THREE.Mesh(new THREE.SphereGeometry(.086,18,14),mWhite);
-    w.position.set(.165*s,.05,.395); w.scale.set(1,.9,.5); yEyesOpen.add(w);
-    const p=new THREE.Mesh(new THREE.SphereGeometry(.046,14,12),mInk);
-    p.position.set(.165*s,.05,.44); p.scale.set(1,1,.55); yEyesOpen.add(p); yPupils.push(p);
-    const sp=new THREE.Mesh(new THREE.SphereGeometry(.015,8,6),mWhite);
-    sp.position.set(.185*s,.08,.47); yEyesOpen.add(sp);
-  });
-  const yEyesShut=new THREE.Group(); yEyesShut.visible=false; yHead.add(yEyesShut);
-  [-1,1].forEach(s=>{
-    const arc=new THREE.Mesh(new THREE.TorusGeometry(.075,.018,8,20,Math.PI),mInk);
-    arc.position.set(.165*s,.03,.42); arc.rotation.x=-.1; yEyesShut.add(arc);
-  });
-  const yBrows=[];
-  [-1,1].forEach(s=>{
-    const b=new THREE.Mesh(new THREE.BoxGeometry(.155,.032,.04),mInk);
-    b.position.set(.17*s,.20,.42); yHead.add(b); yBrows.push({m:b,side:s});
-  });
-  const yMouth=new THREE.Mesh(new THREE.TorusGeometry(.085,.019,8,22,Math.PI),mInk);
-  yMouth.position.set(0,-.18,.42); yMouth.rotation.z=Math.PI; yMouth.rotation.x=-.1; yHead.add(yMouth);
-  const yMouthO=new THREE.Mesh(new THREE.SphereGeometry(.07,16,14),M(0x5A231F,.5));
-  yMouthO.position.set(0,-.20,.41); yMouthO.scale.set(.9,1.1,.5); yMouthO.visible=false; yHead.add(yMouthO);
-  const yBlush=[];
-  [-1,1].forEach(s=>{
-    const b=new THREE.Mesh(new THREE.SphereGeometry(.10,16,12),
-      new THREE.MeshStandardMaterial({color:0xE8705E,roughness:.85,transparent:true,opacity:0}));
-    b.position.set(.29*s,-.08,.34); b.scale.set(1,.65,.2); yHead.add(b); yBlush.push(b);
-  });
-
-  function arm(side){
-    const sh=new THREE.Group(); sh.position.set(.50*side,.36,0); you.add(sh);
-    const up=new THREE.Mesh(new THREE.CylinderGeometry(.125,.115,.56,14),mVest);
-    up.position.y=-.28; up.castShadow=true; sh.add(up);
-    const el=new THREE.Group(); el.position.y=-.56; sh.add(el);
-    const fo=new THREE.Mesh(new THREE.CylinderGeometry(.11,.10,.52,14),mSkin);
-    fo.position.y=-.26; fo.castShadow=true; el.add(fo);
-    const hand=new THREE.Mesh(new THREE.SphereGeometry(.135,16,14),mSkin);
-    hand.position.y=-.55; el.add(hand);
-    return {sh,el,hand};
+  /* ── 붓으로 문지른 살 셰이더 ── */
+  const NOISE=`
+  float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+  float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
+  float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<4;i++){s+=a*vn(p);p*=2.03;a*=.5;}return s;}`;
+  function smearMat(pal,o){
+    o=o||{};
+    const U={uC0:{value:col(pal[0])},uC1:{value:col(pal[1])},uC2:{value:col(pal[2])},uC3:{value:col(pal[3])},
+      uTwist:{value:0},uDrag:{value:0},uFace:{value:o.face||0},uMouth:{value:0},uGreen:{value:0},uOp:{value:o.op||1},
+      uStreak:{value:o.streak||7},uSeed:{value:o.seed||0}};
+    return new THREE.ShaderMaterial({uniforms:U,transparent:!!o.op,depthWrite:!o.op,
+      vertexShader:`uniform float uTwist,uDrag;varying vec3 vP;varying vec3 vN;
+        void main(){vec3 p=position;float a=uTwist*(p.y+.25);float c=cos(a),s=sin(a);
+          p.xz=mat2(c,-s,s,c)*p.xz;p.x+=uDrag*(p.y+1.)*.22;
+          vec3 n=normal;n.xz=mat2(c,-s,s,c)*n.xz;vP=position;vN=normalize(normalMatrix*n);
+          gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
+      fragmentShader:`uniform vec3 uC0,uC1,uC2,uC3;uniform float uFace,uMouth,uGreen,uOp,uStreak,uSeed;varying vec3 vP;varying vec3 vN;
+        ${NOISE}
+        void main(){
+          float ang=atan(vP.x,vP.z);
+          float n1=fbm(vec2(vP.y*uStreak+fbm(vP.xz*2.2+uSeed)*1.4,ang*1.1+uSeed));
+          float n2=fbm(vec2(vP.y*uStreak*2.6+vP.x*2.,vP.z*3.+uSeed));
+          vec3 c=mix(uC0,uC1,smoothstep(.40,.60,n1));
+          c=mix(c,uC2,smoothstep(.56,.70,n2)*.9);
+          c=mix(c,uC3,smoothstep(.64,.78,n1)*.85);
+          c=mix(c,vec3(.36,.42,.16),smoothstep(.74,.84,n2)*.3*uFace);
+          if(uFace>0.){
+            float hm=smoothstep(-.10,.10,vP.y*.75-vP.z*.85+.06+(fbm(vec2(ang*3.,vP.y*4.))-.5)*.25);
+            vec3 hc=mix(vec3(.05,.02,.07),vec3(.22,.10,.26),smoothstep(.35,.75,n2));
+            hc=mix(hc,vec3(.55,.40,.62),smoothstep(.72,.86,n1)*.6);
+            c=mix(c,hc,hm);
+            float fr=smoothstep(.1,.55,vP.z)*(1.-hm);
+            vec2 q=vP.xy;
+            float e=min(length((q-vec2(.33,.16))*vec2(1.,1.35)),length((q-vec2(-.33,.16))*vec2(1.,1.35)));
+            c=mix(c,vec3(.10,.03,.12),smoothstep(.17,.06,e)*fr*.9);
+            c=mix(c,uC3,smoothstep(.26,.17,e)*fr*.35);
+            float mh=.035+.26*uMouth,my=-.44-.06*uMouth;
+            float md=length((q-vec2(0.,my))/vec2(.24+.07*uMouth,mh));
+            float inM=smoothstep(1.,.9,md)*fr;
+            vec3 mc=vec3(.16,.01,.05);
+            float teeth=step(my+mh*.42,q.y)*step(.12,fract(q.x*11.))*step(.25,uMouth);
+            mc=mix(mc,vec3(.98,.92,.80),teeth);
+            float tongue=smoothstep(.0,.6,uMouth)*smoothstep(.75,.4,length((q-vec2(.0,my-mh*.55))/vec2(.14,mh*.4)));
+            mc=mix(mc,vec3(.75,.12,.18),tongue);
+            c=mix(c,mc,inM);
+            c=mix(c,vec3(1.,.93,.86),smoothstep(1.25,1.05,md)*smoothstep(.95,1.05,md)*fr*.7);
+            float nose=smoothstep(.07,.0,abs(q.x+.02))*smoothstep(.3,.0,abs(q.y+.08))*fr;
+            c=mix(c,vec3(1.,.95,.9),nose*.55);
+          }
+          c=mix(c,c*vec3(.55,1.05,.35)+vec3(.0,.06,.0),uGreen);
+          float l=clamp(dot(normalize(vN),normalize(vec3(-.45,.55,.7))),0.,1.);
+          c*=.42+.78*l;
+          c+=pow(1.-abs(normalize(vN).z),3.)*vec3(.05,.0,.08);
+          gl_FragColor=vec4(c,uOp);
+          #include <encodings_fragment>
+        }`});
   }
-  const armL=arm(-1), armR=arm(1);
+  const FLESH=["#F2A3A3","#FFE6D2","#B85A8E","#7D3B9C"],SUIT=["#2132A6","#3F5BE0","#0E1550","#8DA2FF"],
+        CAPE=["#7A3FB0","#A777E0","#3B1B6E","#F3E4FF"],ACID=["#93CF2A","#E3F56A","#4C8A14","#FFFFFF"],
+        WHITE=["#FFF6EA","#E9D6E6","#FFFFFF","#C9A6C8"];
 
-  const mirror=new THREE.Group(); mirror.visible=false; armR.el.add(mirror);
-  mirror.position.set(.06,-.66,-.04); mirror.rotation.set(2.67,0,-.18);
-  const mHandle=new THREE.Mesh(new THREE.CylinderGeometry(.055,.05,.34,12),M(0x6E8590,.35));
-  mHandle.position.y=-.30; mirror.add(mHandle);
-  const mFrame=new THREE.Mesh(new THREE.CylinderGeometry(.34,.34,.06,26),M(0x6E8590,.35));
-  mFrame.rotation.x=Math.PI/2; mirror.add(mFrame);
-  const mGlass=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.07,26),
-    new THREE.MeshStandardMaterial({color:0xD7E9F2,roughness:.05,metalness:.65}));
-  mGlass.rotation.x=Math.PI/2; mGlass.position.z=.035; mirror.add(mGlass);
+  /* ── 바닥·깔개·그림자 웅덩이 ── */
+  const flat=(hex,o)=>new THREE.MeshBasicMaterial(Object.assign({color:col(hex)},o||{}));
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(80,40),flat("#F6A1B6"));floor.rotation.x=-PI/2;floor.position.z=-6;scene.add(floor);
+  {const band=new THREE.Mesh(new THREE.PlaneGeometry(80,.18),flat("#FFFFFF"));band.position.set(0,.02,-25.8);band.rotation.x=-PI/2;scene.add(band);}
+  const rug=new THREE.Mesh(new THREE.CircleGeometry(1.5,64),flat("#3A2F7A"));rug.rotation.x=-PI/2;rug.position.set(.75,.012,3.0);rug.scale.set(1,.72,1);scene.add(rug);
+  const rugRim=new THREE.Mesh(new THREE.RingGeometry(1.5,1.56,64),flat("#FFF4DC"));rugRim.rotation.x=-PI/2;rugRim.position.set(.75,.014,3.0);rugRim.scale.set(1,.72,1);scene.add(rugRim);
+  const pool=(x,z,rx,rz)=>{const m=new THREE.Mesh(new THREE.CircleGeometry(1,48),flat("#3A1430",{transparent:true,opacity:.62}));
+    m.rotation.x=-PI/2;m.position.set(x,.02,z);m.scale.set(rx,rz,1);scene.add(m);return m;};
+  pool(-.5,-3.2,3.2,1.1);const mePool=pool(.85,3.05,.42,.2);
 
-  // 후려치는 손
-  const hand=new THREE.Group(); hand.visible=false; hand.scale.setScalar(1.15); scene.add(hand);
-  const palm=new THREE.Mesh(new THREE.SphereGeometry(.62,24,18),mSkin);
-  palm.scale.set(1,1.18,.40); palm.castShadow=true; hand.add(palm);
-  for(let i=0;i<4;i++){
-    const x=(i-1.5)*.30, len=.82-Math.abs(i-1.2)*.10;
-    const f=new THREE.Mesh(new THREE.CylinderGeometry(.135,.12,len,10),mSkin);
-    f.position.set(x,.68+len*.5,0); f.rotation.z=(i-1.5)*.11; hand.add(f);
-    const tip=new THREE.Mesh(new THREE.SphereGeometry(.135,12,10),mSkin);
-    tip.position.set(x+(i-1.5)*.06,.68+len,0); hand.add(tip);
+  /* ── 공간 틀 (우리) ── */
+  const cage=new THREE.Group();cage.position.set(.75,0,3.0);scene.add(cage);
+  {const cm=flat("#FFF4DC"),dm=flat("#5A2340"),w=1.25,d=1.05,h=2.55;
+   const edge=(a,b,m,r)=>{const v=new THREE.Vector3().subVectors(b,a),L=v.length();
+     const e=new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,6),m);e.position.copy(a).addScaledVector(v,.5);
+     e.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());cage.add(e);};
+   const Pb=[[-w,0,-d],[w,0,-d],[w,0,d],[-w,0,d]].map(p=>new THREE.Vector3(p[0],p[1],p[2]));
+   const Pt=Pb.map(p=>p.clone().setY(h));
+   for(let i=0;i<4;i++){edge(Pb[i],Pb[(i+1)%4],cm,.016);edge(Pt[i],Pt[(i+1)%4],cm,.016);edge(Pb[i],Pt[i],cm,.016);
+     edge(Pt[i].clone().add(new THREE.Vector3(.03,-.03,0)),Pt[(i+1)%4].clone().add(new THREE.Vector3(.03,-.03,0)),dm,.008);}
+   edge(new THREE.Vector3(-w,h*.62,d),new THREE.Vector3(w,h*.62,d),cm,.012);}
+
+  /* ── 거대한 머리 ── */
+  const bust=new THREE.Group();bust.position.set(-.5,0,-3.4);scene.add(bust);
+  const spin=new THREE.Group();bust.add(spin);
+  const S0=1.75;
+  const headGeo=(()=>{const g=new THREE.SphereGeometry(1,96,72);g.rotateY(-PI/2);
+    const P=g.attributes.position,d=new THREE.Vector3();
+    for(let i=0;i<P.count;i++){d.set(P.getX(i),P.getY(i),P.getZ(i));
+      let x=d.x*.9,y=d.y*1.0,z=d.z*.93;const low=sstep(.0,-.95,d.y);x*=1-.16*low;z*=1-.06*low;
+      const fr=sstep(0,.8,d.z);
+      const f=.06*fr*G2(d.x,d.y,0,-.05,.09,.22)+.05*fr*G2(d.x,d.y,0,.3,.6,.1)-.05*fr*(G2(d.x,d.y,.33,.16,.13,.1)+G2(d.x,d.y,-.33,.16,.13,.1))
+        +.05*fr*G2(d.x,d.y,0,-.78,.25,.12);
+      P.setXYZ(i,x*(1+f),y*(1+f),z*(1+f));}
+    g.computeVertexNormals();return g;})();
+  const headMat=smearMat(FLESH,{face:1,streak:6.5});
+  const head=new THREE.Mesh(headGeo,headMat);head.scale.setScalar(S0);head.position.y=3.65;spin.add(head);
+  const earM=smearMat(FLESH,{streak:9,seed:2});
+  [-1,1].forEach(sd=>{const e=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),earM);e.position.set(.9*sd,.02,-.06);e.scale.set(.1,.22,.15);e.rotation.y=sd*.3;head.add(e);});
+  const ghosts=[.42,.24,.12].map((op,i)=>{const m=smearMat(FLESH,{face:1,streak:6.5,op,seed:i*3.1+1});
+    const gh=new THREE.Mesh(headGeo,m);gh.scale.setScalar(S0*.995);gh.position.y=3.65;bust.add(gh);return gh;});
+  const capeMat=smearMat(CAPE,{streak:4});
+  const cape=new THREE.Mesh(new THREE.SphereGeometry(1,64,40),capeMat);cape.scale.set(S0*1.55,S0*.95,S0*.95);cape.position.y=3.65-S0*1.55;spin.add(cape);
+  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.55,.75,.5,40),smearMat(WHITE,{streak:9}));collar.scale.setScalar(S0);collar.position.y=3.65-S0*.98;spin.add(collar);
+  // 셔터: 머리를 덮고 흘러내린 세로 붓질
+  const veil=new THREE.Mesh(new THREE.PlaneGeometry(3.9,5.0),new THREE.ShaderMaterial({transparent:true,depthWrite:false,
+    uniforms:{uA:{value:.3}},
+    vertexShader:`varying vec2 vU;void main(){vU=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform float uA;varying vec2 vU;${NOISE}
+      void main(){float x=vU.x*6.+fbm(vec2(vU.y*1.2,vU.x*3.))*1.4;float st=fract(x);
+        float band=smoothstep(.0,.1,st)*smoothstep(.55,.4,st);
+        float fade=smoothstep(.0,.25,vU.y)*smoothstep(1.,.75,vU.y)*smoothstep(.0,.12,vU.x)*smoothstep(1.,.88,vU.x);
+        float a=band*fade*uA*(.35+.65*fbm(vec2(vU.x*20.,vU.y*2.)));
+        vec3 c=mix(vec3(1.,.95,.9),vec3(.55,.3,.7),fbm(vec2(vU.x*12.,vU.y*3.)));
+        gl_FragColor=vec4(c,a);
+        #include <encodings_fragment>
+      }`}));
+  veil.position.set(-.5,3.75,-1.3);scene.add(veil);
+
+  /* ── 토사물: 산성 초록 물감 줄기 ── */
+  const NV=60,vom=new THREE.Mesh(taperTube(NV,10,k=>.27*(1-k*.25)*(1+.15*Math.sin(k*40))),smearMat(ACID,{streak:14}));vom.visible=false;scene.add(vom);
+  const vpts=[...Array(NV)].map(()=>new THREE.Vector3());
+  const vomS=new THREE.Mesh(taperTube(NV,8,k=>.11*(1-k*.3)*(1+.15*Math.sin(k*40))),smearMat(ACID,{streak:14}));vomS.visible=false;scene.add(vomS);
+  const vptsS=[...Array(NV)].map(()=>new THREE.Vector3());
+  const PX=.1,PZ=1.575;   // 정면을 볼 때 입에서 떨어지는 자리
+  const vomPool=new THREE.Mesh(new THREE.CircleGeometry(1,48),smearMat(ACID,{streak:3}));vomPool.rotation.x=-PI/2;vomPool.visible=false;scene.add(vomPool);
+
+  /* ── 나: 파란 양복의 인물 ── */
+  const me=new THREE.Group();scene.add(me);
+  const body=new THREE.Group();me.add(body);
+  const suitM=smearMat(SUIT,{streak:5}),fleshM=smearMat(FLESH,{streak:9}),shoeM=smearMat(["#22183A","#3A2C5E","#0C0818","#7A6AA0"],{streak:8});
+  const add=(par,geo,mat,x,y,z,sx,sy,sz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(sx!==undefined)m.scale.set(sx,sy,sz);par.add(m);return m;};
+  const SPH=new THREE.SphereGeometry(1,28,20);
+  [-1,1].forEach(s=>{add(body,new THREE.CylinderGeometry(.09,.075,.86,16),suitM,.1*s,.47,0);add(body,SPH,shoeM,.1*s,.04,.05,.075,.05,.14);});
+  add(body,new THREE.CylinderGeometry(.25,.2,.72,20),suitM,0,1.2,0);
+  add(body,SPH,suitM,0,1.52,0,.25,.1,.16);
+  add(body,SPH,smearMat(WHITE,{streak:12}),0,1.38,.12,.08,.16,.06);
+  add(body,new THREE.BoxGeometry(.04,.22,.02),smearMat(["#C0182E","#FF4B5C","#6A0716","#FFB0B8"]),0,1.33,.18);
+  const kHead=new THREE.Group();kHead.position.y=1.56;body.add(kHead);
+  add(kHead,new THREE.CylinderGeometry(.055,.065,.12,12),fleshM,0,.04,0);
+  const kFaceM=smearMat(FLESH,{face:1,streak:10,seed:4});
+  add(kHead,SPH,kFaceM,0,.2,0,.12,.145,.125);
+  add(kHead,SPH,smearMat(["#2A1A2E","#5A3A5A","#120812","#8A6A8A"],{streak:12}),0,.27,-.02,.125,.1,.13);
+  function arm(s){
+    const sh=new THREE.Group();sh.position.set(.25*s,1.43,0);body.add(sh);
+    add(sh,SPH,suitM,0,0,0,.075,.075,.075);add(sh,new THREE.CylinderGeometry(.068,.06,.29,14),suitM,0,-.145,0);
+    const el=new THREE.Group();el.position.y=-.29;sh.add(el);
+    add(el,SPH,suitM,0,0,0,.06,.06,.06);add(el,new THREE.CylinderGeometry(.058,.048,.25,14),suitM,0,-.12,0);
+    const hd=new THREE.Group();hd.position.y=-.27;el.add(hd);add(hd,SPH,fleshM,0,-.04,0,.05,.075,.03);
+    return {sh,el,hd};
   }
-  const thumb=new THREE.Mesh(new THREE.CylinderGeometry(.17,.14,.66,12),mSkin);
-  thumb.position.set(.66,.06,.06); thumb.rotation.z=-1.15; hand.add(thumb);
-  const thumbTip=new THREE.Mesh(new THREE.SphereGeometry(.17,14,12),mSkin);
-  thumbTip.position.set(.94,-.06,.06); hand.add(thumbTip);
-  const wrist=new THREE.Mesh(new THREE.CylinderGeometry(.36,.44,1.6,16),mSkin);
-  wrist.position.y=-1.2; hand.add(wrist);
+  const armL=arm(-1),armR=arm(1);
+  const mirror=new THREE.Group();armR.hd.add(mirror);mirror.position.set(0,-.08,.04);mirror.rotation.set(-1.2,0,0);
+  add(mirror,new THREE.TorusGeometry(.08,.014,8,24),smearMat(["#E8B22A","#FFE58A","#9A6A10","#FFFFFF"]),0,.06,0);
+  add(mirror,new THREE.CircleGeometry(.075,24),flat("#DDF4FF",{side:THREE.DoubleSide}),0,.06,.004);
+  mirror.visible=false;
+  const POSES={
+    idle:  [.10,.05,.10, .10,-.05,.10], ready: [-.45,.22,-.55, -.45,-.22,-.55],
+    chest: [-.55,.52,-1.95, .10,-.05,.10], pat:   [.10,.05,.10, -2.75,-.28,-.35],
+    cheeks:[-1.25,.32,-2.05, -1.25,-.32,-2.05], hug: [-1.15,.68,-1.45, -1.05,-.62,-1.55],
+    mirror:[.10,.05,.10, -1.45,-.18,-.95], kiss:  [.10,.05,.10, -1.20,-.52,-1.95],
+    shock: [-.3,-.55,-.4, -.3,.55,-.4], slump: [.05,.02,.02, .05,-.02,.02]};
+  const HEADP={idle:[0,0],ready:[.04,0],chest:[.14,.08],pat:[.16,-.1],cheeks:[-.05,0],hug:[.18,.12],mirror:[-.12,.05],kiss:[.10,.12],shock:[-.2,0],slump:[.42,0]};
 
-  // 발밑 그림자
-  const shadow=new THREE.Mesh(new THREE.CircleGeometry(1.0,32),
-    new THREE.MeshBasicMaterial({color:0x4A5240,transparent:true,opacity:.22}));
-  shadow.rotation.x=-Math.PI/2; shadow.position.set(0,-1.86,0); you.add(shadow);
+  /* ── 후려치는 손: 번진 살 ── */
+  const hand=new THREE.Group();hand.visible=false;scene.add(hand);
+  {const hm=smearMat(FLESH,{streak:5,seed:7});add(hand,SPH,hm,0,0,0,.55,.62,.22);
+   for(let i=0;i<4;i++){const x=(i-1.5)*.26,len=.6-Math.abs(i-1.4)*.08;const f=new THREE.Group();f.position.set(x,.45,0);f.rotation.z=(i-1.5)*.1;hand.add(f);
+     add(f,new THREE.CylinderGeometry(.11,.12,len,12),hm,0,len/2,0);add(f,SPH,hm,0,len,0,.11,.11,.11);}
+   const th=new THREE.Group();th.position.set(.5,-.08,.05);th.rotation.z=-1.0;hand.add(th);
+   add(th,new THREE.CylinderGeometry(.12,.13,.48,12),hm,0,.24,0);add(th,SPH,hm,0,.48,0,.12,.12,.12);
+   add(hand,new THREE.CylinderGeometry(.38,.42,1.3,20),smearMat(CAPE,{streak:4}),0,-1.05,0);
+   hand.scale.setScalar(1.9);}
+  const handGhosts=[.35,.18].map(op=>{const g=hand.clone();g.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.uniforms.uOp.value=op;o.material.transparent=true;o.material.depthWrite=false;}});scene.add(g);return g;});
 
-  parts={eyes,eyeShut,brows,mouthFlat,mouthLine,mouthOpen,tongue,cheeks,blushes,tint,sweat,
-    mouthAnchor,spew,strand,lipDrip,drops,hand,hairs,
-    armL,armR,mirror,
-    yHead,yEyesOpen,yEyesShut,yBrows,yMouth,yMouthO,yBlush,yPupils};
-
-  resize();
-  window.addEventListener("resize",resize);
+  /* ── 매 프레임 ── */
+  const tmpV=new THREE.Vector3(),mw=new THREE.Vector3();
+  let W=360,Hh=640,prevYaw=PI;
+  const hist=[],pa=POSES.idle.slice(),hT=[0,0];
+  // 잔상은 시간 기준으로 늦춘다 — 프레임 수가 달라도 번지는 폭이 같다
+  function yawAt(t){
+    if(!hist.length)return prevYaw;
+    if(t<=hist[0][0])return hist[0][1];
+    for(let i=hist.length-1;i>0;i--){const a=hist[i-1],b=hist[i];
+      if(a[0]<=t&&t<=b[0]){const k=(t-a[0])/Math.max(1e-6,b[0]-a[0]);return a[1]+(b[1]-a[1])*k;}}
+    return hist[hist.length-1][1];
+  }
+  function reset(){hist.length=0;prevYaw=PI;for(let i=0;i<6;i++)pa[i]=POSES.idle[i];hT[0]=hT[1]=0;}
+  function resize(){
+    const w=canvas.clientWidth||360,h=canvas.clientHeight||640;W=w;Hh=h;
+    renderer.setSize(w,h,false);const a=w/h;camera.aspect=a;
+    // 내 발이 하단 버튼 위에 오고(세로), 우리가 좌우로 잘리지 않게(가로) 시야를 정한다
+    const hud=document.getElementById("hud");
+    const f=clamp(((hud?hud.offsetTop:h*.82)-8)/h,.7,.95);
+    const tv=Math.max(.254/(2*f-1),.1828/a,Math.tan(18*PI/180));
+    camera.fov=2*Math.atan(tv)*180/PI;
+    camera.position.set(.9,2.75,13.5);camera.lookAt(0,2.65,0);camera.updateProjectionMatrix();
+  }
+  const handAt=st=>{let x,y,rz;
+    if(st<.30){const e=1-Math.pow(1-st/.30,2);x=6.5-2.6*e;y=2.2+.9*e;rz=-.15-.45*e;}
+    else if(st<.58){const e=Math.pow((st-.30)/.28,1.6);x=3.9-8.6*e;y=3.1-1.3*e;rz=-.6+1.2*e;}
+    else{const e=st-.58;x=-4.7-e*12;y=1.8+e*.6;rz=.6+e*.5;}return [x,y,rz];};
+  function render(S,dt){
+    const t=S.t,gag=S.gag,puke=S.puke,spit=S.spit>=0?S.spit:-1;
+    const gl=.7+.6*clamp((S.hp||0)/5,0,1);   // 들킬수록 헛구역질이 세진다
+    const dy=S.yaw-prevYaw;prevYaw=S.yaw;
+    hist.push([t,S.yaw]);while(hist.length>2&&hist[0][0]<t-.4)hist.shift();
+    spin.rotation.y=S.yaw;
+    const w=Math.abs(dy)/Math.max(dt,1/240),speed=clamp(w*.45,0,1.4);
+    let tw=-.55*S.coil*Math.sign(Math.sin(S.yaw)||1)+(dy>0?-1:1)*speed*.45;
+    if(gag>0)tw+=Math.sin(t*23)*.12*gag*gl;
+    headMat.uniforms.uTwist.value=tw;
+    headMat.uniforms.uDrag.value=clamp(-Math.sign(dy)*w*.3,-.6,.6)+(S.coil>0?Math.sin(t*50)*.06*S.coil:0);
+    capeMat.uniforms.uTwist.value=tw*.4;
+    const mouth=puke?1:spit>=0?.85:gag>0?Math.min(1,(.35+.35*Math.abs(Math.sin(t*9)))*gl):(S.mode==="stare"||S.mode==="front")?.06:0;
+    headMat.uniforms.uMouth.value=mouth;headMat.uniforms.uGreen.value=Math.min(1,gag*.7*gl+(puke||spit>=0?.35:0));
+    head.rotation.x=gag>0&&!puke?.12*gag*gl:puke?.18:0;
+    const moving=speed>.05;
+    ghosts.forEach((gh,i)=>{
+      gh.rotation.y=moving?yawAt(t-(i+1)*.045):S.yaw;
+      if(S.coil>0)gh.rotation.y+=(i%2?-1:1)*.12*(i+1)*S.coil;
+      if(gag>0&&!moving)gh.rotation.y=S.yaw+Math.sin(t*17+i*2)*.08*gag;
+      gh.rotation.x=head.rotation.x;
+      const u=gh.material.uniforms;u.uTwist.value=tw*(1+.4*(i+1));u.uMouth.value=mouth;u.uGreen.value=headMat.uniforms.uGreen.value;
+      gh.visible=moving||S.coil>0||gag>0;
+      gh.position.x=(gag>0?Math.sin(t*19+i)*.08*gag*gl:0)+(S.coil>0?(i%2?1:-1)*(.16+.12*i)*S.coil*(.65+.35*Math.sin(t*38+i*2)):0);
+    });
+    veil.material.uniforms.uA.value=.3+.3*S.coil+.2*gag;
+    bust.position.y=S.coil>0?-.1*S.coil:0;
+    /* 토사물 — 찔끔(3·4번째)과 마지막 왕창. 웅덩이는 판이 끝날 때까지 남는다 */
+    vom.visible=false;vomS.visible=false;vomPool.visible=false;
+    if(puke||spit>=0){bust.updateMatrixWorld(true);mw.set(0,-.48,.9);head.localToWorld(mw);}
+    if(puke){
+      const L=Math.min(1,.15+S.pukeT*.6);
+      for(let i=0;i<NV;i++){const k=i/(NV-1)*L;vpts[i].set(mw.x+(PX-mw.x)*k+Math.sin(k*9+t*14)*.06,mw.y-(mw.y-.05)*Math.pow(k,1.4),mw.z+(PZ-mw.z)*k);}
+      vom.geometry.update(vpts);vom.visible=true;
+    }else if(spit>=0){
+      const L=Math.min(1,.1+spit*2.4);
+      for(let i=0;i<NV;i++){const k=i/(NV-1)*L;vptsS[i].set(mw.x+(PX-mw.x)*k+Math.sin(k*9+t*16)*.04,mw.y-(mw.y-.05)*Math.pow(k,1.4),mw.z+(PZ-mw.z)*k);}
+      vomS.geometry.update(vptsS);vomS.visible=true;
+    }
+    {const pd=S.puddle||0,pr=puke?Math.min(1,S.pukeT/1.8):0;
+     const ps=Math.max(pd>0?.45+1.5*pd:0,puke?.5+2.3*pr:0);
+     if(ps>0){vomPool.visible=true;vomPool.position.set(PX,.03,PZ);vomPool.scale.set(ps,ps*.45,1);}}
+    /* 나 */
+    const k=Math.min(1,dt*12),tg=POSES[S.pose]||POSES.idle;
+    for(let i=0;i<6;i++)pa[i]+=(tg[i]-pa[i])*k;
+    armL.sh.rotation.set(pa[0],0,pa[1]);armL.el.rotation.x=pa[2];armR.sh.rotation.set(pa[3],0,pa[4]);armR.el.rotation.x=pa[5];
+    const hq=HEADP[S.pose]||HEADP.idle;hT[0]+=(hq[0]-hT[0])*k;hT[1]+=(hq[1]-hT[1])*k;
+    kHead.rotation.x=hT[0];kHead.rotation.z=hT[1];
+    mirror.visible=S.pose==="mirror";
+    const shock=S.pose==="shock"||S.count>0;
+    kFaceM.uniforms.uMouth.value=shock?.55:S.pose==="kiss"?.15:0;
+    kFaceM.uniforms.uTwist.value=shock?Math.sin(t*30)*.35:(S.poseT<.2?(1-S.poseT/.2)*.5:0);
+    me.position.set(.75,Math.sin(t*1.15)*.012,3.0);me.rotation.set(0,-.12,0);me.scale.setScalar(1.05);
+    if(S.shockT>=0&&S.shockT<.4)me.position.y=.18*Math.sin(S.shockT/.4*PI);
+    if(S.flyT>=0){const f=S.flyT;me.position.x+=-9.5*f;me.position.y+=4.4*f-8*f*f;me.rotation.z=11*f;me.rotation.y=-.12+4*f;}
+    mePool.visible=S.flyT<0;
+    /* 손 */
+    [hand,...handGhosts].forEach((h,i)=>{const st=S.slapT-i*.035;
+      if(S.slapT>=0&&S.slapT<1.6&&st>=0){h.visible=true;const p=handAt(st);h.position.set(p[0],p[1],3.0);h.rotation.set(0,PI*.5-.75,p[2]);}
+      else h.visible=false;});
+    renderer.render(scene,camera);
+    tmpV.set(0,.42,0);kHead.localToWorld(tmpV);tmpV.project(camera);
+    return [(tmpV.x*.5+.5)*W,(-tmpV.y*.5+.5)*Hh];
+  }
+  resize();window.addEventListener("resize",resize);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(resize);
+  return {render,resize,reset};
 }
 
-/* 얼굴 꼭대기와 내 가슴께가 항상 화면에 들어오도록 카메라가 스스로 물러난다 */
-const camTarget=new THREE.Vector3(0,1.05,0.4);
-function frameScene(){
-  if(!head||!you)return;
-  const h=canvas.clientHeight||640;
-  const topPx=Math.min(150,h*0.19), botPx=Math.min(200,h*0.25);
-  const ndcTop=1-2*(topPx/h), ndcBot=-1+2*(botPx/h);
-  const want=ndcTop-ndcBot, midWant=(ndcTop+ndcBot)/2;
-  const pTop=new THREE.Vector3(), pBot=new THREE.Vector3();
-  const topY=()=>head.position.y+1.22*head.scale.x;
-  const botY=()=>you.position.y-0.90*you.scale.x;
-  for(let i=0;i<40;i++){
-    camera.lookAt(camTarget); camera.updateMatrixWorld();
-    pTop.set(0,topY(),head.position.z).project(camera);
-    pBot.set(0,botY(),you.position.z).project(camera);
-    const err=(pTop.y-pBot.y)-want;
-    if(Math.abs(err)<0.008)break;
-    camera.position.z=Math.max(4.0,Math.min(26,camera.position.z+err*2.6));
-  }
-  for(let i=0;i<24;i++){
-    camera.lookAt(camTarget); camera.updateMatrixWorld();
-    pTop.set(0,topY(),head.position.z).project(camera);
-    pBot.set(0,botY(),you.position.z).project(camera);
-    const d=((pTop.y+pBot.y)/2)-midWant;
-    if(Math.abs(d)<0.006)break;
-    camera.position.y+=d*1.1; camTarget.y+=d*1.1;
-  }
-  camera.lookAt(camTarget); camera.updateProjectionMatrix();
-}
-function resize(){
-  const w=canvas.clientWidth||360,h=canvas.clientHeight||640;
-  renderer.setSize(w,h,false);
-  camera.aspect=w/h;
-  camera.position.set(VIEW.camX,1.5,9.0);
-  camTarget.set(0,1.05,0.4);
-  camera.updateProjectionMatrix();
-  frameScene();
-}
-
-/* ══════════ 자세 · 표정 ══════════ */
-const POSES={
-  idle:  {lsx:.16,lsz:.06,lex:.14,   rsx:.16,rsz:-.06,rex:.14},
-  ready: {lsx:-.62,lsz:.26,lex:-.72, rsx:-.62,rsz:-.26,rex:-.72},
-  chest: {lsx:-.41,lsz:.41,lex:-2.11, rsx:.16,rsz:-.06,rex:.14},
-  pat:   {lsx:.16,lsz:.06,lex:.14,   rsx:-2.75,rsz:-.35,rex:-.14},
-  cheeks:{lsx:-1.55,lsz:.18,lex:-1.76, rsx:-1.55,rsz:-.18,rex:-1.76},
-  hug:   {lsx:-1.35,lsz:.52,lex:-1.05, rsx:-1.35,rsz:-.52,rex:-1.05},
-  mirror:{lsx:.16,lsz:.06,lex:.14,   rsx:-2.05,rsz:-.34,rex:-.62},
-  kiss:  {lsx:.16,lsz:.06,lex:.14,   rsx:-1.43,rsz:-.42,rex:-1.69}
-};
-/* eyes: open / shut / down,  mouth: flat / smile / wide / open,  blush 0~1, headTilt */
-const FACES={
-  idle:  {eyes:"open", mouth:"flat",  blush:0,   tilt:0,    brow:0},
-  ready: {eyes:"open", mouth:"flat",  blush:.15, tilt:.04,  brow:0},
-  chest: {eyes:"shut", mouth:"smile", blush:.45, tilt:.12,  brow:.15},
-  pat:   {eyes:"shut", mouth:"smile", blush:.55, tilt:.18,  brow:.15},
-  cheeks:{eyes:"shut", mouth:"wide",  blush:.95, tilt:-.06, brow:.30},
-  hug:   {eyes:"shut", mouth:"smile", blush:.85, tilt:.16,  brow:.20},
-  mirror:{eyes:"open", mouth:"wide",  blush:.70, tilt:-.10, brow:.25},
-  kiss:  {eyes:"shut", mouth:"kiss",  blush:1,   tilt:.06,  brow:.30},
-  shock: {eyes:"open", mouth:"open",  blush:.20, tilt:-.18, brow:-.4}
-};
-let poseTarget=POSES.idle, poseNow=Object.assign({},POSES.idle);
-let faceTarget=FACES.idle, faceNow={blush:0,tilt:0,brow:0};
-function setPose(k){
-  poseTarget=POSES[k]||POSES.idle;
-  faceTarget=FACES[k]||FACES.idle;
-  if(!parts)return;
-  parts.mirror.visible=(k==="mirror");
-  const e=faceTarget.eyes;
-  parts.yEyesOpen.visible=(e!=="shut");
-  parts.yEyesShut.visible=(e==="shut");
-  parts.yPupils.forEach(p=>{ p.position.y = e==="down" ? .012 : .05; });
-  const m=faceTarget.mouth;
-  const openM=(m==="open"||m==="kiss");
-  parts.yMouth.visible=!openM;
-  parts.yMouthO.visible=openM;
-  if(openM){
-    if(m==="kiss")parts.yMouthO.scale.set(.62,.72,.5);
-    else parts.yMouthO.scale.set(.9,1.1,.5);
-  }else{
-    parts.yMouth.rotation.z=Math.PI;
-    const sc = m==="wide" ? 1.5 : (m==="smile" ? 1.15 : .8);
-    parts.yMouth.scale.set(sc,m==="flat"?.35:.9,1);
-  }
-}
-function stepPose(dt){
-  if(!parts)return;
-  const k=Math.min(1,dt*9);
-  for(const key in poseTarget) poseNow[key]+=(poseTarget[key]-poseNow[key])*k;
-  parts.armL.sh.rotation.x=poseNow.lsx; parts.armL.sh.rotation.z=poseNow.lsz;
-  parts.armL.el.rotation.x=poseNow.lex;
-  parts.armR.sh.rotation.x=poseNow.rsx; parts.armR.sh.rotation.z=poseNow.rsz;
-  parts.armR.el.rotation.x=poseNow.rex;
-  faceNow.blush+=(faceTarget.blush-faceNow.blush)*k;
-  faceNow.tilt +=(faceTarget.tilt -faceNow.tilt )*k;
-  faceNow.brow +=(faceTarget.brow -faceNow.brow )*k;
-  parts.yBlush.forEach(b=>b.material.opacity=faceNow.blush*.7);
-  parts.yHead.rotation.x=faceNow.tilt*.5;
-  parts.yHead.rotation.z=Math.sin(clock*.8)*.03;
-  parts.yBrows.forEach(b=>{
-    b.m.position.y=.20+faceNow.brow*.035;
-    b.m.rotation.z=-faceNow.brow*.22*b.side;
-  });
-}
+/* ══════════ 자세 ══════════ */
+let poseCur="idle",poseT=9;
+function setPose(k){if(k!==poseCur){poseCur=k;poseT=0;}}
 
 /* ══════════ 상태 ══════════ */
 let G=null,freeze=0,clock=0;
-const _v=new THREE.Vector3();
 function buildPatience(){
   const p=document.getElementById("pat");p.innerHTML="";
   for(let i=0;i<P.patience;i++)p.appendChild(document.createElement("div"));
@@ -985,30 +988,28 @@ function drawPatience(){
   });
 }
 function newGame(){
-  G={run:true,over:false,t:0,score:0,holding:false,prog:0,cd:0,tier:-1,
-     hp:0, lowStreak:0, healNeed:P.healNeed,
-     face:{mode:"away",yaw:Math.PI,t:0,wait:1.6,fake:false,fakeAt:1,turn:.95,wind:.34,coil:0},
-     gagT:0,pukeT:0,pukeE:0,shockT:0,idle:0,slapT:-1,hit:false,sigh:false,fly:null};
+  G={run:true,over:false,t:0,score:0,holding:false,prog:0,cd:0,tier:-1,hp:0,
+     face:{mode:"front",yaw:0,t:0,wait:1.8+Math.random()*.8,fake:false,fakeAt:1,turn:P.turnDur,wind:P.windDur,coil:0,
+           fakes:0,peeks:0,from:0,peekTo:1.5,peekHold:.15},
+     gagT:0,pukeT:0,pukeE:0,shockT:0,slapT:-1,hit:false,sigh:false,
+     wasted:0,winUsed:true,stareT:0,spitT:-9,spitDone:true,puddle:0};
   document.getElementById("scoreNum").textContent="0";
-  poseNow=Object.assign({},POSES.idle); setPose("idle");
+  setPose("idle"); if(BC)BC.reset();
   renderStage(); document.getElementById("say").classList.remove("on");
   document.getElementById("hold").classList.remove("cool");
   buildPatience(); drawPatience(); cntNow=-1; setCount(0);
-  if(parts){parts.spew.visible=false;parts.mouthOpen.visible=false;parts.tongue.visible=false;
-    parts.eyeShut.visible=false;parts.sweat.visible=false;parts.hand.visible=false;
-    head.position.set(0,VIEW.headY,-1.0);head.rotation.set(.15,Math.PI,0);}
-  you.position.set(-.05,VIEW.youY,2.2); you.rotation.set(0,VIEW.youTurn,0);
-  nextWait();
 }
 function ramp(){return Math.min(1,G.t/P.rampTime);}
-function nextWait(){
-  const k=ramp(),f=G.face;
-  const mx=P.waitMax+(P.waitFloorMax-P.waitMax)*k;
-  const mn=P.waitMin+(P.waitFloorMin-P.waitMin)*k;
+const lerp=(a,b,k)=>a+(b-a)*k;
+function drawWatch(f){f.wait=P.watchMin+Math.random()*(P.watchMax-P.watchMin);}
+/* 돌아서 있을 시간과, 그 끝에 진짜로 돌아볼지 돌아보는 척만 할지 정한다 */
+function drawAway(f){
+  const k=ramp();
+  const mx=lerp(P.awayMax,P.awayFloorMax,k),mn=lerp(P.awayMin,P.awayFloorMin,k);
   f.wait=mn+Math.random()*(mx-mn);
-  f.turn=P.turnDur+(P.turnFloor-P.turnDur)*k;
-  f.wind=P.windDur+(P.windFloor-P.windDur)*k;
-  f.fake=Math.random()<(P.fakeChance+(P.fakeMax-P.fakeChance)*k);
+  f.turn=lerp(P.turnDur,P.turnFloor,k);
+  f.wind=lerp(P.windDur,P.windFloor,k);
+  f.fake=f.fakes<2&&Math.random()<lerp(P.fakeBack,P.fakeBackMax,k);
   // 페이크는 판정각 바로 앞(약 0.68rad)까지 들어왔다 되돌아간다
   f.fakeAt=.50+Math.random()*.17;
 }
@@ -1054,20 +1055,7 @@ function bank(){
     const g=document.getElementById("gain");
     g.textContent="+"+TIERS[i].pt;g.classList.remove("on");void g.offsetWidth;g.classList.add("on");
     SFX.bank();
-    // 실제로 뭔가 해냈을 때만 응시 타이머가 풀린다 (톡톡 누르기로는 안 풀림)
-    G.idle=0;
-    if(G.face.mode==="stare"){G.face.mode="back";G.face.t=0;}
-    // 낮은 단계를 연속으로 해내면 인내심 한 칸이 돌아온다.
-    // 다만 다음 회복에 필요한 횟수가 계속 늘어나서 무한히 버틸 수는 없다.
-    if(i<=P.lowTier){
-      G.lowStreak++;
-      if(G.lowStreak>=G.healNeed&&G.hp>0){
-        G.hp--; G.lowStreak=0; G.healNeed+=P.healStep;
-        drawPatience(); SFX.heal();
-        const pt=document.getElementById("pat");
-        pt.classList.remove("heal");void pt.offsetWidth;pt.classList.add("heal");
-      }
-    }else G.lowStreak=0;
+    G.winUsed=true;                 // 이번 틈을 썼다
   }
   G.cd=P.cooldown; release();
 }
@@ -1095,7 +1083,7 @@ function enterTier(i){
   G.tier=i;const T=TIERS[i];
   setPose(T.pose);SFX.tier(i);
   const s=document.getElementById("say");
-  s.textContent=pickLine(T.cat);
+  s.textContent=pickLine();
   s.classList.remove("side-l","side-r");
   s.classList.add(Math.random()<.5?"side-l":"side-r");
   s.classList.add("on");
@@ -1107,7 +1095,7 @@ function enterTier(i){
 function caught(){
   const cost=(G.tier===TIERS.length-1)?P.topCost:1;
   G.hp=Math.min(P.patience,G.hp+cost);
-  G.gagT=1.5; G.shockT=1.0; G.lowStreak=0;
+  G.gagT=1.5; G.shockT=1.0; G.wasted=0; G.stareT=0;
   drawPatience();
   const app=document.getElementById("app");
   app.classList.remove("shake");void app.offsetWidth;app.classList.add("shake");
@@ -1117,9 +1105,12 @@ function caught(){
   fl.classList.remove("on");void fl.offsetWidth;fl.classList.add("on");
   SFX.caught();freeze=.13;
   // 헛구역질(1.5초) 보다 쿨다운을 길게 잡아, 그 사이에 안전하게 벌 수 없게 한다
-  release(); setPose("shock"); G.cd=P.gagLock; G.idle=0; setCount(0);
-  if(G.face.mode==="stare"){G.face.mode="back";G.face.t=0;}
-  if(G.hp>=P.patience)endGame(true);
+  release(); setPose("shock"); G.cd=P.gagLock; setCount(0);
+  // 헛구역질이 끝나면 다시 쳐다보는 데서 시작한다
+  const f=G.face; f.mode="front"; f.t=0; f.coil=0; f.peeks=0; drawWatch(f);
+  if(G.hp>=P.patience){endGame(true);return;}
+  // 세 번째부터는 헛구역질 끝에 찔끔 토한다 — 바닥에 고인 게 판이 끝날 때까지 남는다
+  if(G.hp>=3){G.spitT=-.55;G.spitDone=false;}
 }
 
 /* ══════════ 루프 ══════════ */
@@ -1141,14 +1132,6 @@ function loop(ts){
     if(G.holding&&G.tier>=0&&!G.over){
       if(Math.abs(wrap(G.face.yaw))<P.catchAngle)caught();
     }
-    // 응시 타이머는 손을 뗀 채 '아무것도 안 하고 있을 때만' 흐른다
-    if(!G.holding&&G.gagT<=0&&G.cd<=0&&G.slapT<0){
-      G.idle+=dt;
-      if(G.idle>=P.idleStare&&G.face.mode!=="stare"){G.face.mode="stare";G.face.t=0;SFX.turn();}
-      const left=P.idleSlap-G.idle;
-      setCount(left<=3.0?Math.max(1,Math.ceil(left)):0);
-      if(G.idle>=P.idleSlap&&G.slapT<0){setCount(0);G.slapT=0;G.run=false;SFX.whoosh();}
-    }else if(G.slapT<0)setCount(0);
     if(G.holding){
       G.prog+=dt;
       holdBtn.querySelector(".fill").style.width=(Math.min(1,G.prog/MAXT)*100)+"%";
@@ -1164,6 +1147,12 @@ function loop(ts){
     if(G.slapT>3.7&&!G.over)endGame(false);
   }
   if(G.gagT>0)G.gagT-=dt;
+  if(G.spitT>-9){
+    G.spitT+=dt;
+    if(!G.spitDone&&G.spitT>=0){G.spitDone=true;SFX.spit();}
+    if(G.spitT>=0&&G.spitT<1.1)G.puddle=Math.min(1,G.puddle+.34*dt/1.1);
+    if(G.spitT>=1.1)G.spitT=-9;
+  }
   if(G.pukeT>0){G.pukeT-=dt;G.pukeE=(G.pukeE||0)+dt;}
   if(G.shockT>0){G.shockT-=dt; if(G.shockT<=0&&!G.over)setPose("idle");}
   render(dt);
@@ -1177,7 +1166,7 @@ function setCount(n){
   el.textContent=n;
   el.classList.add("on");
   el.classList.remove("tick");void el.offsetWidth;el.classList.add("tick");
-  pop(0,n===1?880:620,n===1?1180:820,.10,.10);
+  SFX.count(n);
 }
 function wrap(a){a=a%(Math.PI*2);if(a>Math.PI)a-=Math.PI*2;if(a<-Math.PI)a+=Math.PI*2;return a;}
 
@@ -1185,185 +1174,99 @@ function stepFace(dt){
   const f=G.face;
   if(G.gagT>0||G.pukeT>0){f.yaw+=(0-wrap(f.yaw))*Math.min(1,dt*6);f.coil=0;return;}
   f.t+=dt;
-  if(f.mode==="stare"){ f.yaw+=(0-wrap(f.yaw))*Math.min(1,dt*4); f.coil=0; return; }
+  const rk=ramp();
   switch(f.mode){
-    case "away":
-      f.yaw=Math.PI+Math.sin(clock*.7)*.12;
-      f.coil=0;
+    case "front":                       // 쳐다본다
+      f.yaw=Math.sin(clock*1.4)*.05; f.coil=0;
       if(f.t>=f.wait){
-        // 진짜 회전에만 예비동작이 붙는다. 페이크는 예고 없이 바로 돈다.
+        if(G.wasted>=P.wasteLimit){f.mode="stare";f.t=0;G.stareT=0;break;}
+        if(f.peeks<2&&Math.random()<lerp(P.fakeAway,P.fakeAwayMax,rk)){
+          // 돌아서는 척 — 옆얼굴까지만 돌고 휙 돌아온다
+          f.mode="peek";f.t=0;f.peeks++;f.peekTo=1.3+Math.random()*.9;f.peekHold=.12+Math.random()*.13;SFX.turn();
+        }else{f.mode="leave";f.t=0;f.peeks=0;f.from=f.yaw;SFX.turn();}
+      }
+      break;
+    case "peek":{
+      const a=.32,h=f.peekHold,b=.22;
+      if(f.t<a){const e=1-Math.pow(1-f.t/a,2);f.yaw=f.peekTo*e;}
+      else if(f.t<a+h){f.yaw=f.peekTo;}
+      else if(f.t<a+h+b){const e=Math.pow((f.t-a-h)/b,2);f.yaw=f.peekTo*(1-e);}
+      else{f.yaw=0;f.mode="front";f.t=0;f.wait=.8+Math.random()*1.0;}
+      break;}
+    case "leave":{                      // 진짜로 돌아선다 — 다 돌아선 뒤부터가 기회
+      const q=Math.min(1,f.t/P.leaveDur),e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;
+      f.yaw=f.from+(Math.PI-f.from)*e;
+      if(q>=1){f.mode="away";f.t=0;f.fakes=0;G.winUsed=false;drawAway(f);}
+      break;}
+    case "away":
+      f.yaw=Math.PI+Math.sin(clock*.7)*.12; f.coil=0;
+      if(f.t>=f.wait){
+        // 진짜로 돌아볼 때만 예비동작이 붙는다. 페이크는 예고 없이 바로 돈다.
         if(f.fake){f.mode="turn";f.t=0;SFX.turn();}
         else{f.mode="wind";f.t=0;SFX.wind();}
       }
       break;
-    case "wind":{                       // 움츠린다 — 고개를 더 돌리며 숙였다가 제자리
+    case "wind":{                       // 겹쳐 떨린다 — 고개를 더 돌리며 숙였다가 제자리
       const k=Math.min(1,f.t/f.wind);
       const s=Math.sin(k*Math.PI);
       f.coil=s;
       f.yaw=Math.PI+0.22*s;
-      if(k>=1){f.coil=0;f.mode="turn";f.t=0;}
+      if(k>=1){f.coil=0;f.mode="turn";f.t=0;SFX.turn();}
       break;}
     case "turn":{
       const k=Math.min(1,f.t/f.turn);
       const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
       f.yaw=Math.PI*(1-e);
       if(f.fake&&k>=f.fakeAt){f.mode="fake";f.t=0;f.from=f.yaw;}
-      else if(k>=1){f.mode="front";f.t=0;}
+      else if(k>=1){
+        f.mode="front";f.t=0;drawWatch(f);
+        // 이번 틈에 아무것도 안 했으면 센다
+        if(G.winUsed)G.wasted=0;else G.wasted++;
+      }
       break;}
-    case "fake":{
+    case "fake":{                       // 돌아보는 척하다 다시 돌아선다 — 틈이 새로 열린다
       const k=Math.min(1,f.t/.5);
       f.yaw=f.from+(Math.PI-f.from)*k;
-      // 페이크를 읽고 버틴 사람은 창이 새로 갱신되어 더 깊게 갈 수 있다
-      if(k>=1){f.mode="away";f.t=0;nextWait();}
+      if(k>=1){f.mode="away";f.t=0;f.fakes++;drawAway(f);}
       break;}
-    case "front":
-      f.yaw=Math.sin(clock*1.4)*.05;
-      if(f.t>=P.frontHold){f.mode="back";f.t=0;}
-      break;
-    case "back":{
-      const k=Math.min(1,f.t/P.backDur);
-      f.yaw=Math.PI*k;
-      if(k>=1){f.mode="away";f.t=0;nextWait();}
+    case "stare":{                      // 노려보다가 카운트다운 → 후려친다
+      f.yaw+=(0-wrap(f.yaw))*Math.min(1,dt*4); f.coil=0;
+      G.stareT+=dt;
+      setCount(G.stareT<P.stareHold?0:Math.max(1,3-Math.floor(G.stareT-P.stareHold)));
+      if(G.stareT>=P.stareHold+3&&G.slapT<0){setCount(0);G.slapT=0;G.run=false;SFX.whoosh();}
       break;}
   }
 }
 
 /* ══════════ 렌더 ══════════ */
+const sayEl=document.getElementById("say"),appEl=document.getElementById("app");
+let sayW=0,sayTxt="";
+window.addEventListener("resize",()=>{sayW=0;});
+/* 말풍선은 내 머리 위에 붙이고, 화면 밖으로 나가지 않게 가둔다 */
+function placeSay(xy){
+  if(!xy||!sayEl.classList.contains("on"))return;
+  if(sayEl.textContent!==sayTxt){sayTxt=sayEl.textContent;sayW=0;}
+  if(!sayW)sayW=sayEl.offsetWidth;
+  const fw=appEl.clientWidth,af=sayEl.classList.contains("side-r")?.18:.82;
+  const left=clamp(xy[0]-af*sayW,10,Math.max(10,fw-10-sayW));
+  sayEl.style.left=left.toFixed(1)+"px";sayEl.style.top=(xy[1]-8).toFixed(1)+"px";
+  sayEl.style.setProperty("--tx",clamp(xy[0]-left,16,Math.max(16,sayW-16)).toFixed(1)+"px");
+}
 function render(dt){
-  if(!ok3d||!parts)return;
-  stepPose(dt);
-  const g=G, yaw=g?g.face.yaw:Math.PI;
-  head.rotation.y=yaw;
-  const coil=g?(g.face.coil||0):0;
-  const lvl=g?g.hp/P.patience:0;
-  const gag=g&&g.gagT>0?Math.min(1,g.gagT/1.0):0;
-  const puke=g&&g.pukeT>0?1:0;
-
-  parts.eyes.forEach(e=>{
-    e.g.rotation.y+=((-yaw*.22)-e.g.rotation.y)*Math.min(1,dt*7);
-    const lidDown=.255-(.14*lvl)-(.08*gag);   // 기본부터 반쯤 내려앉은 눈
-    e.lid.position.y+=(lidDown-e.lid.position.y)*Math.min(1,dt*8);
-    e.g.visible=!(gag>0||puke>0);
-    e.lid.visible=e.g.visible;
-  });
-  parts.eyeShut.visible=(gag>0||puke>0);
-  parts.brows.forEach(b=>{
-    const z=(.02+.42*lvl+.42*gag)*b.side, y=.44-.045*lvl-.03*gag;
-    b.m.rotation.z+=(z-b.m.rotation.z)*Math.min(1,dt*8);
-    b.m.position.y+=(y-b.m.position.y)*Math.min(1,dt*8);
-  });
-  const open=gag>0||puke>0;
-  parts.mouthFlat.visible=!open;
-  parts.mouthLine.visible=!open&&lvl>.05;
-  parts.mouthOpen.visible=open;
-  parts.tongue.visible=puke>0;
-  if(!open){
-    parts.mouthFlat.scale.set(Math.max(.05,1-lvl*.85),1,1);
-    parts.mouthLine.scale.setScalar(Math.max(.01,lvl*1.05));
-    parts.mouthLine.position.y=-.35-.06*lvl;
-  }else{
-    const s=puke?1.7:(.75+.75*Math.abs(Math.sin(clock*19)));
-    parts.mouthOpen.scale.set(.95*s,.65*s,.5);
+  if(!ok3d||!BC)return;
+  poseT+=dt;
+  const g=G;
+  const gag=g&&g.gagT>0?Math.min(1,g.gagT/1.0):0, puke=!!(g&&g.pukeT>0);
+  // 손이 몸을 지나는 순간 맞는다
+  if(g&&g.slapT>=.46&&!g.hit){
+    g.hit=true;SFX.slap();
+    appEl.classList.remove("shake");void appEl.offsetWidth;appEl.classList.add("shake");
   }
-  const puff=gag*(.85+.25*Math.sin(clock*18));
-  parts.cheeks.forEach(c=>c.scale.setScalar(Math.max(.01,puff)));
-  parts.blushes.forEach(b=>b.material.opacity=.45*lvl+.35*gag);
-  parts.tint.material.opacity=.26*lvl+.34*gag+.46*puke;
-  parts.sweat.visible=lvl>.5||gag>0;
-  if(parts.sweat.visible){
-    const p=(clock*.75)%1;
-    parts.sweat.position.set(.62,.62-p*1.3,.72-p*.18);
-    parts.sweat.material.opacity=.9*(1-p);
-  }
-  // 예비동작 — 머리카락이 한 박자 늦게 쏠린다
-  parts.hairs.forEach((h,i)=>{
-    const t=coil*.10*(i%2?1:-1)+Math.sin(clock*1.3+i)*.012;
-    h.rotation.y+=(t-h.rotation.y)*Math.min(1,dt*10);
-  });
-
-  const BY=VIEW.headY, BZ=-1.0, TILT=.15;
-  let hx=TILT,hy=BY,hz=BZ,hrz=0,hpx=0;
-  if(puke){
-    hx=TILT+.62;hz=BZ+.60;hy=BY-.62;
-    hrz=Math.sin(clock*7)*.04; hpx=Math.sin(clock*5)*.05;
-  }else if(gag>0){
-    const jolt=Math.pow(gag,.5);
-    hx=TILT+.52*jolt; hz=BZ+.42*jolt; hy=BY-.24*jolt;
-    hrz=Math.sin(clock*30)*.10*gag; hpx=Math.sin(clock*26)*.13*gag;
-  }else{
-    // coil 이 클수록 목을 움츠리고 살짝 뒤로 물러난다
-    hx=TILT+coil*.26;
-    hy=BY+Math.sin(clock*.9)*.03-coil*.15;
-    hz=BZ-coil*.10;
-    hrz=Math.sin(clock*.6)*.02+coil*.07;
-  }
-  const lerpK=coil>0?Math.min(1,dt*16):Math.min(1,dt*11);
-  head.rotation.x+=(hx-head.rotation.x)*lerpK;
-  head.rotation.z+=(hrz-head.rotation.z)*Math.min(1,dt*13);
-  head.position.y+=(hy-head.position.y)*lerpK;
-  head.position.z+=(hz-head.position.z)*lerpK;
-  head.position.x+=(hpx-head.position.x)*Math.min(1,dt*13);
-
-  // 토사물
-  parts.spew.visible=puke>0;
-  if(puke){
-    parts.mouthAnchor.getWorldPosition(_v);
-    parts.spew.position.copy(_v);
-    const e=(g.pukeE||0);
-    const L=Math.min(2.8,.25+e*2.6);
-    parts.strand.scale.set(1+.14*Math.sin(clock*13),L,1+.10*Math.sin(clock*9));
-    parts.strand.position.set(Math.sin(clock*3.4)*.05,-L*.48+.04,.10+L*.09);
-    parts.strand.rotation.set(.24+.05*Math.sin(clock*5),0,Math.sin(clock*4)*.05);
-    parts.lipDrip.position.set(0,-.04,.10);
-    parts.lipDrip.scale.set(1.5+.2*Math.sin(clock*11),.7,1);
-    parts.drops.forEach(d=>{
-      const u=d.userData;
-      u.life-=dt;
-      if(u.life<=0){
-        u.life=.9+Math.random()*1.0;
-        d.position.set((Math.random()-.5)*.22,-.05,.08+Math.random()*.12);
-        u.vx=(Math.random()-.5)*.9; u.vy=-.25-Math.random()*.6; u.vz=.45+Math.random()*1.1;
-        d.scale.setScalar(.55+Math.random()*.9);
-      }
-      u.vy-=7.2*dt;
-      d.position.x+=u.vx*dt; d.position.y+=u.vy*dt; d.position.z+=u.vz*dt;
-    });
-  }
-
-  // 후려치기
-  if(g&&g.slapT>=0){
-    const t=g.slapT, H=parts.hand;
-    H.visible=t<1.4;
-    if(t<.38){                                   // 화면 밖에서 들어와 치켜든다
-      const k=t/.38, e=k*k;
-      H.position.set(8.4-5.6*e,1.9-.3*e,2.15);
-      H.rotation.set(0,0,-.35-.55*e);
-    }else if(t<.56){                              // 후려친다
-      const k=(t-.38)/.18;
-      H.position.set(2.8-11.5*k,1.6-1.0*k,2.15);
-      H.rotation.set(0,0,-.90+2.6*k);
-    }else{
-      H.position.x-=dt*17;
-    }
-    if(!g.hit&&t>=.46){
-      g.hit=true; SFX.slap();
-      g.fly={vx:-11.5,vy:4.6,vr:15};
-      const app=document.getElementById("app");
-      app.classList.remove("shake");void app.offsetWidth;app.classList.add("shake");
-    }
-  }
-  if(g&&g.fly){
-    g.fly.vy-=17*dt;
-    you.position.x+=g.fly.vx*dt;
-    you.position.y+=g.fly.vy*dt;
-    you.rotation.z+=g.fly.vr*dt;
-    you.rotation.y+=g.fly.vr*.35*dt;
-  }else{
-    you.position.y=VIEW.youY+Math.sin(clock*1.15)*.018;
-    you.position.x=(g&&g.shockT>0)?-.05+Math.sin(g.shockT*40)*.04*(g.shockT/1.0):-.05;
-  }
-
-  renderer.render(scene,camera);
+  const xy=BC.render({t:clock,yaw:g?g.face.yaw:Math.PI,coil:g?(g.face.coil||0):0,mode:g?g.face.mode:"away",
+    gag:puke?1:gag,puke,pukeT:g?(g.pukeE||0):0,hp:g?g.hp:0,pose:poseCur,poseT,count:cntNow>0?cntNow:0,
+    shockT:g&&g.shockT>0?1-g.shockT:-1,slapT:g?g.slapT:-1,flyT:g&&g.slapT>=.46?g.slapT-.46:-1,
+    spit:g&&g.spitT>=0&&g.spitT<1.1?g.spitT/1.1:-1,puddle:g?(g.puddle||0):0},dt);
+  placeSay(xy);
 }
 
 /* ══════════ 엔딩 ══════════ */
@@ -1448,70 +1351,59 @@ document.getElementById("sndBtn").addEventListener("click",e=>{
 }));
 
 buildLadder(); buildPatience();
-if(ok3d){build3D();requestAnimationFrame(loop);}
-/* ══════════ 우로보로스 ══════════ */
+BC=buildBacon();if(ok3d)requestAnimationFrame(loop);
+/* ══════════ 우로보로스 — 붓으로 문지른 살색·보라 뱀 ══════════ */
 (function(){
-  const cx=100,cy=100,R=62,a0=72,sweep=342,N=140,W0=15.5,W1=2.4;
-  const rad=a=>a*Math.PI/180;
-  const pt=(a,r)=>[cx+r*Math.cos(rad(a)),cy+r*Math.sin(rad(a))];
-  const w=t=>W1+(W0-W1)*Math.pow(1-t,1.2);
-  const join=arr=>arr.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" L");
-
-  const outer=[],inner=[],bellyO=[],bellyI=[];
-  for(let i=0;i<=N;i++){
-    const t=i/N,a=a0+sweep*t,ww=w(t);
-    outer.push(pt(a,R+ww)); inner.push(pt(a,R-ww));
-    bellyO.push(pt(a,R-ww*0.10)); bellyI.push(pt(a,R-ww));
-  }
-  const dBody="M"+join(outer)+" L"+join(inner.slice().reverse())+" Z";
-  const dBelly="M"+join(bellyO)+" L"+join(bellyI.slice().reverse())+" Z";
-
-  let scales="";
-  for(let i=7;i<N-8;i+=5){
-    const t=i/N,a=a0+sweep*t,ww=w(t);
-    const [x,y]=pt(a,R+ww*0.22), s=Math.max(.3,ww/W0);
-    scales+='<path d="M-5,-4.4 Q1.4,0 -5,4.4" transform="translate('+x.toFixed(2)+','+y.toFixed(2)+
-      ') rotate('+(a+90).toFixed(1)+') scale('+s.toFixed(2)+')" fill="none" stroke="#8ED4A8" '+
-      'stroke-width="1.7" stroke-linecap="round" opacity="'+(0.20+0.45*s).toFixed(2)+'"/>';
-  }
-
-  const [hx,hy]=pt(a0,R);
-  const [tx,ty]=pt(a0+sweep,R);
-  const hrot=Math.atan2(ty-hy,tx-hx)*180/Math.PI;
-
-  const headG='<g transform="translate('+hx.toFixed(2)+','+hy.toFixed(2)+') rotate('+hrot.toFixed(1)+')">'+
-    '<ellipse cx="-3" cy="0" rx="18" ry="13.5" fill="url(#gBody)" stroke="#16211C" stroke-width="2.4"/>'+
-    '<path d="M2,-9.5 C13,-12.4 26,-8.6 35,-1.4 L26.5,0.6 C19,-3.6 10,-5.6 2,-4.6 Z" '+
-      'fill="url(#gBody)" stroke="#16211C" stroke-width="2.2" stroke-linejoin="round"/>'+
-    '<path d="M2,9.5 C13,12 24.5,9 32,4.4 L24.5,3.4 C17.5,6.4 10,7.4 2,6.4 Z" '+
-      'fill="#D9A23F" stroke="#16211C" stroke-width="2.2" stroke-linejoin="round"/>'+
-    '<path d="M-16,-8 C-6,-11 6,-10 14,-6" fill="none" stroke="#8ED4A8" stroke-width="2" '+
-      'stroke-linecap="round" opacity=".55"/>'+
-    '<ellipse cx="-1.5" cy="-5.2" rx="4.6" ry="4.2" fill="#F2C24C" stroke="#16211C" stroke-width="1.8"/>'+
-    '<ellipse cx="-1.5" cy="-5.2" rx="1.5" ry="3.6" fill="#16211C"/>'+
-    '<circle cx="-3" cy="-6.6" r="1" fill="#FFF6DF"/>'+
-    '<circle cx="12" cy="-6.6" r="1.5" fill="#16211C" opacity=".7"/>'+
-    '</g>';
-
-  const svg=
-    '<svg viewBox="0 0 200 200" role="img" aria-hidden="true">'+
-      '<defs>'+
-        '<linearGradient id="gBody" x1="0" y1="0" x2="0.35" y2="1">'+
-          '<stop offset="0" stop-color="#63B98D"/>'+
-          '<stop offset="0.55" stop-color="#2F7A5C"/>'+
-          '<stop offset="1" stop-color="#1E5643"/>'+
-        '</linearGradient>'+
-      '</defs>'+
-      '<path d="'+dBody+'" transform="translate(2.5,4)" fill="#2A3A2C" opacity=".18"/>'+
-      '<path d="'+dBody+'" fill="url(#gBody)" stroke="#16211C" stroke-width="2.6" stroke-linejoin="round"/>'+
-      '<path d="'+dBelly+'" fill="#E0AC44" opacity=".92"/>'+
-      '<path d="'+dBelly+'" fill="none" stroke="#16211C" stroke-width="1.1" opacity=".45"/>'+
-      scales+
-      headG+
-    '</svg>';
-
   const btn=document.getElementById("ouro");
-  btn.insertAdjacentHTML("beforeend",svg);
+  const cv=document.createElement("canvas");btn.appendChild(cv);
+  const PAL={hi:"#FFF1E4",lt:"#FFE0CC",pk:"#F2A3A3",rs:"#E07A8A",mv:"#B85A8E",vi:"#6A2F8C",cr:"#9A2244"};
+  function stroke(g,x,y,ang,len,wid,c,al){g.globalAlpha=al;g.strokeStyle=c;g.lineWidth=wid;g.lineCap="round";
+    g.beginPath();g.moveTo(x-Math.cos(ang)*len/2,y-Math.sin(ang)*len/2);g.lineTo(x+Math.cos(ang)*len/2,y+Math.sin(ang)*len/2);g.stroke();}
+  function draw(){
+    const S=btn.clientWidth||240,d=Math.min(2,window.devicePixelRatio||1);
+    cv.width=Math.round(S*d);cv.height=Math.round(S*d);
+    const g=cv.getContext("2d");g.setTransform(cv.width/200,0,0,cv.height/200,0,0);g.clearRect(0,0,200,200);
+    const r=rng(7),cx=100,cy=94,R=58,a0=72*PI/180,sw=342*PI/180;
+    const wd=t=>3.2+17.5*Math.pow(1-t,1.1);
+    const P=(a,rr)=>[cx+rr*Math.cos(a),cy+rr*Math.sin(a)];
+    // 그림자 웅덩이
+    g.globalAlpha=1;g.fillStyle="rgba(58,20,48,.45)";g.beginPath();g.ellipse(104,172,74,13,0,0,PI*2);g.fill();
+    // 몸통 바탕
+    g.beginPath();
+    for(let i=0;i<=120;i++){const t=i/120,p=P(a0+sw*t,R+wd(t));g[i?"lineTo":"moveTo"](p[0],p[1]);}
+    for(let i=120;i>=0;i--){const t=i/120,p=P(a0+sw*t,R-wd(t));g.lineTo(p[0],p[1]);}
+    g.closePath();g.fillStyle=PAL.mv;g.fill();
+    // 붓질 — 바깥 위쪽은 빛을 받아 밝고, 안쪽 아래는 보라로 가라앉는다
+    for(let i=0;i<1900;i++){
+      const t=r(),a=a0+sw*t,w=wd(t),u=r()*2-1,p=P(a,R+u*w*.92);
+      const nx=Math.cos(a)*u,ny=Math.sin(a)*u;
+      const lit=clamp(.44-.6*(nx*.6+ny*.8)+(r()-.5)*.6,0,1);
+      const c=r()<.05?PAL.cr:lit>.88?PAL.hi:lit>.76?PAL.lt:lit>.6?PAL.pk:lit>.46?PAL.rs:lit>.3?PAL.mv:PAL.vi;
+      stroke(g,p[0],p[1],a+PI/2+(r()-.5)*.6,2.5+r()*7*(w/14+.35),1+r()*2.4*(w/14+.3),c,.5+r()*.45);
+    }
+    // 가로로 끌린 흰 자국
+    for(let i=0;i<7;i++){const t=.08+r()*.7,a=a0+sw*t,p=P(a,R+(r()-.5)*wd(t));
+      stroke(g,p[0],p[1],(r()-.5)*.25,10+r()*16,1.4+r()*1.6,PAL.hi,.55);}
+    // 머리 — 제 꼬리를 문다
+    const h=P(a0,R),tl=P(a0+sw,R),rot=Math.atan2(tl[1]-h[1],tl[0]-h[0]);
+    g.save();g.translate(h[0],h[1]);g.rotate(rot);g.scale(1.5,1.5);g.globalAlpha=1;
+    g.fillStyle="#3A0A18";g.beginPath();g.moveTo(-2,-6);g.lineTo(31,-3.5);g.lineTo(29,5);g.lineTo(-2,7);g.closePath();g.fill();
+    g.fillStyle=PAL.pk;g.beginPath();g.moveTo(-6,-14);g.quadraticCurveTo(16,-17,35,-6);g.lineTo(27,-2.5);g.quadraticCurveTo(12,-6,-4,-4);g.closePath();g.fill();
+    g.fillStyle=PAL.mv;g.beginPath();g.moveTo(-6,13);g.quadraticCurveTo(14,14,31,6);g.lineTo(25,3.8);g.quadraticCurveTo(11,7,-4,7);g.closePath();g.fill();
+    g.fillStyle=PAL.hi;
+    for(let i=0;i<5;i++){const x=4+i*5.5;
+      g.beginPath();g.moveTo(x,-4.6+i*.5);g.lineTo(x+1.8,-1+i*.4);g.lineTo(x+3.4,-4.2+i*.5);g.closePath();g.fill();
+      g.beginPath();g.moveTo(x+1,6-i*.3);g.lineTo(x+2.6,2.8-i*.2);g.lineTo(x+4.2,5.6-i*.3);g.closePath();g.fill();}
+    g.fillStyle=PAL.rs;g.beginPath();g.ellipse(-6,0,18,14,0,0,PI*2);g.fill();
+    for(let i=0;i<240;i++){const a=r()*PI*2,rr=Math.sqrt(r()),x=-6+Math.cos(a)*18*rr,y=Math.sin(a)*14*rr;
+      const lit=clamp(.55-.45*(y/14)-.1*((x+6)/18)+(r()-.5)*.5,0,1);
+      const c=lit>.75?PAL.hi:lit>.6?PAL.lt:lit>.45?PAL.pk:lit>.3?PAL.mv:PAL.vi;
+      stroke(g,x,y,(r()-.5)*.5,2+r()*6,1+r()*2,c,.55+r()*.4);}
+    g.globalAlpha=.92;g.fillStyle="#1E0A22";g.beginPath();g.ellipse(-2,-6,4.6,3.6,-.2,0,PI*2);g.fill();
+    g.globalAlpha=.85;g.fillStyle=PAL.hi;g.beginPath();g.arc(-3.4,-7.2,1.1,0,PI*2);g.fill();
+    g.restore();g.globalAlpha=1;
+  }
+  draw();window.addEventListener("resize",draw);
 })();
 
 document.getElementById("ouro").addEventListener("click",()=>{
