@@ -858,8 +858,44 @@ function buildBacon(){
     chest: [-.55,.52,-1.95, .10,-.05,.10], pat:   [.10,.05,.10, -2.75,-.28,-.35],
     cheeks:[-1.25,.32,-2.05, -1.25,-.32,-2.05], hug: [-1.15,.68,-1.45, -1.05,-.62,-1.55],
     mirror:[.10,.05,.10, -1.45,-.18,-.95], kiss:  [.10,.05,.10, -1.20,-.52,-1.95],
-    shock: [-.3,-.55,-.4, -.3,.55,-.4], slump: [.05,.02,.02, .05,-.02,.02]};
-  const HEADP={idle:[0,0],ready:[.04,0],chest:[.14,.08],pat:[.16,-.1],cheeks:[-.05,0],hug:[.18,.12],mirror:[-.12,.05],kiss:[.10,.12],shock:[-.2,0],slump:[.42,0]};
+    shock: [-.3,-.55,-.4, -.3,.55,-.4], slump: [.05,.02,.02, .05,-.02,.02],
+    shame: [-.18,.30,-.80, -.18,-.30,-.80]};   // 두 손을 앞으로 모으고 움츠림
+  const HEADP={idle:[0,0],ready:[.04,0],chest:[.14,.08],pat:[.16,-.1],cheeks:[-.05,0],hug:[.18,.12],mirror:[-.12,.05],kiss:[.10,.12],shock:[-.2,0],slump:[.42,0],shame:[.58,.10]};
+
+  /* ── 눈물 ── */
+  const tearM=new THREE.MeshBasicMaterial({color:col("#EEF8FF"),transparent:true,opacity:.95,depthWrite:false});
+  const streakM=new THREE.MeshBasicMaterial({color:col("#E6F4FF"),transparent:true,opacity:0,depthWrite:false});
+  [-1,1].forEach(sd=>{const st=new THREE.Mesh(SPH,streakM);st.position.set(.043*sd,.172,.116);st.scale.set(.0095,.052,.005);st.rotation.set(-.25,0,-.08*sd);kHead.add(st);});
+  const DROPS=[...Array(18)].map(()=>{const m=new THREE.Mesh(SPH,tearM);m.visible=false;scene.add(m);
+    return {m,on:false,t:0,sd:1,fall:false,p:new THREE.Vector3(),v:new THREE.Vector3()};});
+  const tearAcc=[0,.5],tv=new THREE.Vector3();
+  let streakA=0;
+  function stepTears(S,dt){
+    const cry=S.cry||0;
+    streakA+=(Math.min(.85,cry*.95)-streakA)*Math.min(1,dt*2);streakM.opacity=streakA;
+    // 한 눈에서 1초에 나오는 방울 수 — 평소엔 조금씩, 토하는 동안엔 줄줄
+    const rate=cry*(S.crying?2.6:1)*1.2;
+    [-1,1].forEach((sd,i)=>{
+      tearAcc[i]+=rate*dt;
+      while(tearAcc[i]>=1){tearAcc[i]-=1;const d=DROPS.find(o=>!o.on);if(d){d.on=true;d.t=0;d.sd=sd;d.fall=false;d.m.visible=true;}}
+    });
+    me.updateMatrixWorld(true);
+    DROPS.forEach(d=>{
+      if(!d.on)return;
+      d.t+=dt;
+      if(!d.fall){
+        // 눈 밑에서 볼을 타고 턱까지 — 갈수록 빨라진다
+        const q=Math.min(1,d.t/.6),e=q*q;
+        tv.set((.040-.014*e)*d.sd,.205-.135*e,.118-.016*e);kHead.localToWorld(tv);d.m.position.copy(tv);
+        d.m.scale.set(.022,.027+.012*e,.022);
+        if(q>=1){d.fall=true;d.p.copy(tv);d.v.set(0,-.4,0);}
+      }else{
+        d.v.y-=7*dt;d.p.addScaledVector(d.v,dt);d.m.position.copy(d.p);d.m.scale.set(.018,.032,.018);
+        if(d.p.y<.03){d.on=false;d.m.visible=false;}
+      }
+    });
+  }
+  function clearTears(){DROPS.forEach(d=>{d.on=false;d.m.visible=false;});tearAcc[0]=0;tearAcc[1]=.5;streakA=0;streakM.opacity=0;}
 
   /* ── 후려치는 손: 번진 살 ── */
   const hand=new THREE.Group();hand.visible=false;scene.add(hand);
@@ -876,6 +912,7 @@ function buildBacon(){
   const tmpV=new THREE.Vector3(),mw=new THREE.Vector3();
   let W=360,Hh=640,prevYaw=PI;
   const hist=[],pa=POSES.idle.slice(),hT=[0,0];
+  let poseKey="idle",prevKey="idle",keyT=9,lean=0;
   // 잔상은 시간 기준으로 늦춘다 — 프레임 수가 달라도 번지는 폭이 같다
   function yawAt(t){
     if(!hist.length)return prevYaw;
@@ -884,7 +921,7 @@ function buildBacon(){
       if(a[0]<=t&&t<=b[0]){const k=(t-a[0])/Math.max(1e-6,b[0]-a[0]);return a[1]+(b[1]-a[1])*k;}}
     return hist[hist.length-1][1];
   }
-  function reset(){hist.length=0;prevYaw=PI;for(let i=0;i<6;i++)pa[i]=POSES.idle[i];hT[0]=hT[1]=0;}
+  function reset(){hist.length=0;prevYaw=PI;for(let i=0;i<6;i++)pa[i]=POSES.idle[i];hT[0]=hT[1]=0;poseKey=prevKey="idle";keyT=9;lean=0;body.rotation.x=0;clearTears();}
   function resize(){
     const w=canvas.clientWidth||360,h=canvas.clientHeight||640;W=w;Hh=h;
     renderer.setSize(w,h,false);const a=w/h;camera.aspect=a;
@@ -942,12 +979,15 @@ function buildBacon(){
      const ps=Math.max(pd>0?.45+1.5*pd:0,puke?.5+2.3*pr:0);
      if(ps>0){vomPool.visible=true;vomPool.position.set(PX,.03,PZ);vomPool.scale.set(ps,ps*.45,1);}}
     /* 나 */
-    const k=Math.min(1,dt*12),tg=POSES[S.pose]||POSES.idle;
+    if(S.pose!==poseKey){prevKey=poseKey;poseKey=S.pose;keyT=0;}
+    keyT+=dt;
+    const k=Math.min(1,dt*(prevKey==="shame"&&keyT<.9?3.5:12)),tg=POSES[S.pose]||POSES.idle;
     for(let i=0;i<6;i++)pa[i]+=(tg[i]-pa[i])*k;
     armL.sh.rotation.set(pa[0],0,pa[1]);armL.el.rotation.x=pa[2];armR.sh.rotation.set(pa[3],0,pa[4]);armR.el.rotation.x=pa[5];
     const hq=HEADP[S.pose]||HEADP.idle;hT[0]+=(hq[0]-hT[0])*k;hT[1]+=(hq[1]-hT[1])*k;
     kHead.rotation.x=hT[0];kHead.rotation.z=hT[1];
     mirror.visible=S.pose==="mirror";
+    lean+=((S.pose==="shame"?.12:0)-lean)*Math.min(1,dt*(S.pose==="shame"?6:3));body.rotation.x=lean;
     const shock=S.pose==="shock"||S.count>0;
     kFaceM.uniforms.uMouth.value=shock?.55:S.pose==="kiss"?.15:0;
     kFaceM.uniforms.uTwist.value=shock?Math.sin(t*30)*.35:(S.poseT<.2?(1-S.poseT/.2)*.5:0);
@@ -955,6 +995,7 @@ function buildBacon(){
     if(S.shockT>=0&&S.shockT<.4)me.position.y=.18*Math.sin(S.shockT/.4*PI);
     if(S.flyT>=0){const f=S.flyT;me.position.x+=-9.5*f;me.position.y+=4.4*f-8*f*f;me.rotation.z=11*f;me.rotation.y=-.12+4*f;}
     mePool.visible=S.flyT<0;
+    stepTears(S,dt);
     /* 손 */
     [hand,...handGhosts].forEach((h,i)=>{const st=S.slapT-i*.035;
       if(S.slapT>=0&&S.slapT<1.6&&st>=0){h.visible=true;const p=handAt(st);h.position.set(p[0],p[1],3.0);h.rotation.set(0,PI*.5-.75,p[2]);}
@@ -992,7 +1033,7 @@ function newGame(){
      face:{mode:"front",yaw:0,t:0,wait:1.8+Math.random()*.8,fake:false,fakeAt:1,turn:P.turnDur,wind:P.windDur,coil:0,
            fakes:0,peeks:0,from:0,peekTo:1.5,peekHold:.15},
      gagT:0,pukeT:0,pukeE:0,shockT:0,slapT:-1,hit:false,sigh:false,
-     wasted:0,winUsed:true,stareT:0,spitT:-9,spitDone:true,puddle:0};
+     wasted:0,winUsed:true,stareT:0,spitT:-9,spitDone:true,puddle:0,shame:false,cry:0};
   document.getElementById("scoreNum").textContent="0";
   setPose("idle"); if(BC)BC.reset();
   renderStage(); document.getElementById("say").classList.remove("on");
@@ -1065,7 +1106,7 @@ function release(){
   holdBtn.classList.remove("down");
   holdBtn.querySelector(".fill").style.width="0%";
   document.getElementById("say").classList.remove("on");
-  setPose("idle"); renderStage();
+  setPose(G.shame?"shame":"idle"); renderStage();
 }
 holdBtn.addEventListener("mousedown",pressDown);
 holdBtn.addEventListener("touchstart",pressDown,{passive:false});
@@ -1095,7 +1136,7 @@ function enterTier(i){
 function caught(){
   const cost=(G.tier===TIERS.length-1)?P.topCost:1;
   G.hp=Math.min(P.patience,G.hp+cost);
-  G.gagT=1.5; G.shockT=1.0; G.wasted=0; G.stareT=0;
+  G.gagT=1.5; G.shockT=1.0; G.wasted=0; G.stareT=0; G.shame=true;
   drawPatience();
   const app=document.getElementById("app");
   app.classList.remove("shake");void app.offsetWidth;app.classList.add("shake");
@@ -1149,12 +1190,12 @@ function loop(ts){
   if(G.gagT>0)G.gagT-=dt;
   if(G.spitT>-9){
     G.spitT+=dt;
-    if(!G.spitDone&&G.spitT>=0){G.spitDone=true;SFX.spit();}
+    if(!G.spitDone&&G.spitT>=0){G.spitDone=true;SFX.spit();G.cry=Math.max(G.cry,.35);}
     if(G.spitT>=0&&G.spitT<1.1)G.puddle=Math.min(1,G.puddle+.34*dt/1.1);
     if(G.spitT>=1.1)G.spitT=-9;
   }
   if(G.pukeT>0){G.pukeT-=dt;G.pukeE=(G.pukeE||0)+dt;}
-  if(G.shockT>0){G.shockT-=dt; if(G.shockT<=0&&!G.over)setPose("idle");}
+  if(G.shockT>0){G.shockT-=dt; if(G.shockT<=0)setPose(G.shame?"shame":"idle");}
   render(dt);
 }
 let cntNow=0;
@@ -1196,7 +1237,8 @@ function stepFace(dt){
     case "leave":{                      // 진짜로 돌아선다 — 다 돌아선 뒤부터가 기회
       const q=Math.min(1,f.t/P.leaveDur),e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;
       f.yaw=f.from+(Math.PI-f.from)*e;
-      if(q>=1){f.mode="away";f.t=0;f.fakes=0;G.winUsed=false;drawAway(f);}
+      if(q>=1){f.mode="away";f.t=0;f.fakes=0;G.winUsed=false;drawAway(f);
+        if(G.shame){G.shame=false;if(!G.holding&&G.shockT<=0)setPose("idle");}}
       break;}
     case "away":
       f.yaw=Math.PI+Math.sin(clock*.7)*.12; f.coil=0;
@@ -1265,7 +1307,8 @@ function render(dt){
   const xy=BC.render({t:clock,yaw:g?g.face.yaw:Math.PI,coil:g?(g.face.coil||0):0,mode:g?g.face.mode:"away",
     gag:puke?1:gag,puke,pukeT:g?(g.pukeE||0):0,hp:g?g.hp:0,pose:poseCur,poseT,count:cntNow>0?cntNow:0,
     shockT:g&&g.shockT>0?1-g.shockT:-1,slapT:g?g.slapT:-1,flyT:g&&g.slapT>=.46?g.slapT-.46:-1,
-    spit:g&&g.spitT>=0&&g.spitT<1.1?g.spitT/1.1:-1,puddle:g?(g.puddle||0):0},dt);
+    spit:g&&g.spitT>=0&&g.spitT<1.1?g.spitT/1.1:-1,puddle:g?(g.puddle||0):0,
+    cry:g?(g.cry||0):0,crying:!!(g&&(g.pukeT>0||(g.spitT>=0&&g.spitT<1.1)))},dt);
   placeSay(xy);
 }
 
@@ -1276,7 +1319,7 @@ function endGame(vomit){
   document.getElementById("endScore").textContent=G.score;
   document.getElementById("hold").classList.remove("cool");
   if(vomit){
-    G.pukeT=999;SFX.puke();
+    G.pukeT=999;SFX.puke();G.cry=1;
     setTimeout(()=>{SFX.quiet();openEnd();},2600);
   }else{SFX.quiet();setTimeout(openEnd,520);}
 }
